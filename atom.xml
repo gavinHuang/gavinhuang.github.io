@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
+  <title><![CDATA[Gavin Huang on Backend Technology]]></title>
   <link href="http://gavinhuang.github.io/atom.xml" rel="self"/>
   <link href="http://gavinhuang.github.io/"/>
-  <updated>2014-09-21T09:05:58+08:00</updated>
+  <updated>2014-09-21T09:59:37+08:00</updated>
   <id>http://gavinhuang.github.io/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
+    <name><![CDATA[Gavin Huang]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
