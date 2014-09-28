@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Gavin Huang on Backend Technology</title>
+  <title>Gavin on Backend Technology</title>
   <meta name="author" content="Gavin Huang">
 
   
-  <meta name="description" content=" Blog Archives Recent Posts ">
+  <meta name="description" content="误解 一直以来，我是这么理解volatile关键字的：该修饰符修饰的变量将不会被缓存（寄存器、处理器二级缓存等），而是直接写入主内存中或从直接主内存中读取。如此，不同的线程间对该变量的读/写到的值都是最新的，也可确保在多线程条件下的正确性，至于什么才叫正确、为什么必须要正确，之前并没有多想。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +21,7 @@
   <link rel="canonical" href="http://gavinhuang.github.io">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="Gavin Huang on Backend Technology" type="application/atom+xml">
+  <link href="/atom.xml" rel="alternate" title="Gavin on Backend Technology" type="application/atom+xml">
   <script src="/javascripts/modernizr-2.0.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
@@ -36,7 +36,7 @@
 
 <body   >
   <header role="banner"><hgroup>
-  <h1><a href="/">Gavin Huang on Backend Technology</a></h1>
+  <h1><a href="/">Gavin on Backend Technology</a></h1>
   
     <h2>backend and more</h2>
   
@@ -66,6 +66,48 @@
       <div class="blog-index">
   
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/recognize-volatile/">重新认识volatile</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-09-26T18:15:40+08:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>6:15 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>误解</h3>
+
+<p>一直以来，我是这么理解volatile关键字的：该修饰符修饰的变量将不会被缓存（寄存器、处理器二级缓存等），而是直接写入主内存中或从直接主内存中读取。如此，不同的线程间对该变量的读/写到的值都是最新的，也可确保在多线程条件下的正确性，至于什么才叫正确、为什么必须要正确，之前并没有多想。</p>
+
+<p>最近拜读了infoq的mini书：《深入理解Java内存模型》（<a href="http://www.infoq.com/cn/minibooks/java_memory_model">http://www.infoq.com/cn/minibooks/java_memory_model</a> ），让我重新认识了Volatile关键字的真实意义和虚拟机的实现机制。本文以本人对volatile的目的、实现等为线索，对该书中volatile部分叙述重新整理，并结合相关资料，试图对volatile做一个个人总结，希望对读者也有所裨益。</p>
+
+<h3>Volatile的真正作用</h3>
+
+<p>开门见山地说，Volatile修饰的变量可以作为线程间协作的“信号量”，此信号量从一个线程被“传递”到另外一个线程，以达到线程协作的目的。从这个角度上说，volatile与“锁”或Synchronized关键字类似，都能达到线程协作的目的。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/recognize-volatile/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
   <div class="pagination">
     
     <a href="/blog/archives">Blog Archives</a>
@@ -77,6 +119,10 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/recognize-volatile/">重新认识volatile</a>
+      </li>
     
   </ul>
 </section>
