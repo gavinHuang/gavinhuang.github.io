@@ -9,7 +9,7 @@
   <meta name="author" content="Gavin Huang">
 
   
-  <meta name="description" content="误解 一直以来，我是这么理解volatile关键字的：该修饰符修饰的变量将不会被缓存（寄存器、处理器二级缓存等），而是直接写入主内存中或从直接主内存中读取。如此，不同的线程间对该变量的读/写到的值都是最新的，也可确保在多线程条件下的正确性，至于什么才叫正确、为什么必须要正确，之前并没有多想。 &hellip;">
+  <meta name="description" content="前言 关系型数据库如SQL server, Oracle, mysql这类强一致性的数据库天然地支持数据库事务，而大部分NoSQL数据库（如Riak）则由于没有隔离性、锁机制等原因不能实现数据库事务，要实现事务控制则必须从应用层面来处理。本文以Riak为例， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -71,6 +71,52 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/nosql-transaction/">如何让nosql数据库支持事务</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-10-08T18:07:12+08:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>6:07 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>前言</h3>
+
+<p>关系型数据库如SQL server, Oracle, mysql这类强一致性的数据库天然地支持数据库事务，而大部分NoSQL数据库（如Riak）则由于没有隔离性、锁机制等原因不能实现数据库事务，要实现事务控制则必须从应用层面来处理。本文以Riak为例，介绍基于nosql数据库的应用如何实现数据库事务的方案。</p>
+
+<h3>事务和隔离性</h3>
+
+<p>在开始介绍方案前，先简单回顾下事务的四个特性（ACID）：
+-   atomicity
+-   consistency
+-   isolation
+-   durability</p>
+
+<p>其中，隔离性是指多个事务（用户）之前的操作不会相互影响，多个事务并行执行结果应该与各个事务串行执行结果一致。注意，这里说的是执行结果应该与串行执行一致，而不是必须串行地执行，因为串行执行会成为性能提升的瓶颈。不同的隔离性会产生不同的副作用，比如：</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/nosql-transaction/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/recognize-volatile/">重新认识volatile</a></h1>
     
     
@@ -119,6 +165,10 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/nosql-transaction/">如何让nosql数据库支持事务</a>
+      </li>
     
       <li class="post">
         <a href="/blog/recognize-volatile/">重新认识volatile</a>
