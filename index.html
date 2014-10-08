@@ -93,11 +93,15 @@
 
 <h3>事务和隔离性</h3>
 
-<p>在开始介绍方案前，先简单回顾下事务的四个特性（ACID）：
--   atomicity
--   consistency
--   isolation
--   durability</p>
+<p>在开始介绍方案前，先简单回顾下事务的四个特性（ACID）：</p>
+
+<ul>
+<li>atomicity</li>
+<li>consistency</li>
+<li>isolation</li>
+<li>durability</li>
+</ul>
+
 
 <p>其中，隔离性是指多个事务（用户）之前的操作不会相互影响，多个事务并行执行结果应该与各个事务串行执行结果一致。注意，这里说的是执行结果应该与串行执行一致，而不是必须串行地执行，因为串行执行会成为性能提升的瓶颈。不同的隔离性会产生不同的副作用，比如：</p>
 
