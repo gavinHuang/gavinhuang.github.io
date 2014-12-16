@@ -4,7 +4,7 @@
   <title><![CDATA[Gavin on Backend Technology]]></title>
   <link href="http://gavinhuang.github.io/atom.xml" rel="self"/>
   <link href="http://gavinhuang.github.io/"/>
-  <updated>2014-12-15T10:41:23+08:00</updated>
+  <updated>2014-12-16T18:13:48+08:00</updated>
   <id>http://gavinhuang.github.io/</id>
   <author>
     <name><![CDATA[Gavin Huang]]></name>
@@ -57,8 +57,9 @@
 
 
 <p>如下图所示：
-![jvm architecture][<a href="http://shyamalmadura.files.wordpress.com/2012/11/jvm_architecture3.png">http://shyamalmadura.files.wordpress.com/2012/11/jvm_architecture3.png</a>]
-(From: <a href="http://shyamalmadura.files.wordpress.com/2012/11/jvm_architecture3.png">http://shyamalmadura.files.wordpress.com/2012/11/jvm_architecture3.png</a>)</p>
+<img src="http://shyamalmadura.files.wordpress.com/2012/11/jvm_architecture3.png"></p>
+
+<p>(From: <a href="http://shyamalmadura.files.wordpress.com/2012/11/jvm_architecture3.png">http://shyamalmadura.files.wordpress.com/2012/11/jvm_architecture3.png</a>)</p>
 
 <p>其中，“程序计数器(PC Register)”是提到较少的概念，其实主要用来记录当前线程的当前指令的内存地址，所以每个线程都会有一个对应的PC Register。
 与PC Register相对应，栈主要记录方法的本地变量和计算的总结结果。由于Java栈只是个逻辑概念，所以其实际所使用的内存有可能也在堆中分配，并且Java栈的大小可以通过JVM启动参数来调节：</p>
@@ -88,8 +89,9 @@
 java.lang.OutOfMemoryError: PermGen space
 这样的错误。
 顾名思义，上述错误中的PermGen space是java堆里的一个区域，除了这个区域，java堆中还有其他区域，如下图所示：
-![JVM Model][<a href="https://autofei.files.wordpress.com/2012/04/jvm_model.jpg">https://autofei.files.wordpress.com/2012/04/jvm_model.jpg</a>]
-[From: <a href="https://autofei.files.wordpress.com/2012/04/jvm_model.jpg">https://autofei.files.wordpress.com/2012/04/jvm_model.jpg</a>]</p>
+<img src="https://autofei.files.wordpress.com/2012/04/jvm_model.jpg"></p>
+
+<p>[From: <a href="https://autofei.files.wordpress.com/2012/04/jvm_model.jpg">https://autofei.files.wordpress.com/2012/04/jvm_model.jpg</a>]</p>
 
 <p>其中Permanent  Space严格来说并不是java堆的组成部分，通常也不接受GC的管理。以上的划分并不是说将java堆物理地分成了三大块，而是GC程序，根据算法需要来划分的逻辑分区，即GC的基本思想是分代收集，分而治之。一个对象刚被创建的时候，是没有任何”信用“的，所以被放在GC监管很频繁的区域中：新生代。如果这个对象经过几轮洗礼，依然被证明是存活的，则表示这个对象足够老资格，会被转移到老年代中，老年代中的GC发生频率要小很多。
 对象经历一次“洗礼”就是虚拟机运行一次GC收集操作，释放将死掉的对象（程序员只管生不管死，所以需要GC来收尸）所占用的内存。然而简单地“释放”内存还不够，否则会给java堆中留下太多内存碎片（还记得Windows的磁盘碎片整理吗？）不利于新对象的内存分配。虚拟机的应对策略是再将新生代分为三个区：Eden Space，Survivor Space（细分为From Space和To Space），新建对象时只放在Eden Space和From Space中，当GC发生时，将存活的对象（占总对象的比率通常很小）从这两个区复制到To Space，这样就把Eden Space和From Space给腾出来了，其中Eden Space还会继续接收新对象，而腾出来的From Space则会预留着给下次GC当”To Space“用。所以From Space和To Space只是相对的。
@@ -216,8 +218,9 @@ The dictionary definition of polymorphism refers to a principle in biology in wh
 除此之外，程序员也可通过自定义的类加载器来加载指定的其他类文件。有点需要注意的是不同的类加载器加载的类可以被理解为有不同的平行世界，哪怕是同一个类文件，如果被不同的类加载器加载的话，会在方法区存在两个类文件，因此判断类型是否相同的操作也会返回false。由于任意
 所以，类加载器的设计最好遵循一种协议，以确保java核心类或公共类在应用范围内不需要被重复加载，并可以允许用户定义自己的类加载器，并加载用户指定的类。这种协议可以通过下面的图来表示：</p>
 
-<p>![class loader][<a href="http://images.cnblogs.com/cnblogs_com/yayagepei/classLoader.jpg">http://images.cnblogs.com/cnblogs_com/yayagepei/classLoader.jpg</a>]
-From:<a href="http://images.cnblogs.com/cnblogs_com/yayagepei/classLoader.jpg">http://images.cnblogs.com/cnblogs_com/yayagepei/classLoader.jpg</a></p>
+<p><img src="http://images.cnblogs.com/cnblogs_com/yayagepei/classLoader.jpg"></p>
+
+<p>From:<a href="http://images.cnblogs.com/cnblogs_com/yayagepei/classLoader.jpg">http://images.cnblogs.com/cnblogs_com/yayagepei/classLoader.jpg</a></p>
 
 <p>开发者可以通过扩展SystemClassLoader，并复写findClass方法实现自己的类查找和加载逻辑，并遵循这样的规则：</p>
 
