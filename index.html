@@ -9,7 +9,7 @@
   <meta name="author" content="Gavin Huang">
 
   
-  <meta name="description" content="前言 作为一个Java程序员，JVM（Java虚拟机，下简称虚拟机）将执行我们编写的代码，并搞定包括内存管理之类的工作，可以说虚拟机是我们的服务提供商，我们是他的客户。从这个角度来说，虚拟机的架构和原理不是必须掌握的知识。然而总会有一些时刻会让我们恨不得把虚拟机扒个精光看透里面的所有花样， &hellip;">
+  <meta name="description" content="前言 基于Restful风格的API设计规范已经被广泛接受。鄙公司也不例外，我们的系统基于Micro Service的理念，各个Services（服务）将功能发布为遵循Restful风格的API，每个服务即成为可对外发布的独立单元，服务之间的组合又可成为新的服务，称为BaaS（Back-end &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,62 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/permission-pattern-in-restful-paas/">Restful API的权限设计思考</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-02-28T10:08:40+08:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>28</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:08 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>前言</h3>
+
+<p>基于Restful风格的API设计规范已经被广泛接受。鄙公司也不例外，我们的系统基于Micro Service的理念，各个Services（服务）将功能发布为遵循Restful风格的API，每个服务即成为可对外发布的独立单元，服务之间的组合又可成为新的服务，称为BaaS（Back-end as a Service)。</p>
+
+<p>由于各个服务需要单独对外提供服务，并且各个服务之间的业务差别比较大，所以在如何控制资源的权限，确保资源不被意外篡改和非法获取，又不违反Micro-Service的理念（单一业务职责）成为每个服务都要考虑的问题，即如何在开放和安全上做到平衡。</p>
+
+<h3>基本结构</h3>
+
+<p>我们总结下来，基本原则当然是遵循Restful规范 （为什么必须遵循Restful规范？如果这是个问题的话，请参考：<a href="http://stackoverflow.com/questions/1368014/why-do-we-need-restful-web-services">http://stackoverflow.com/questions/1368014/why-do-we-need-restful-web-services</a> ）。</p>
+
+<p>由于功能API都遵循Restful，所以我们把权限的分为如下几种：</p>
+
+<ul>
+<li>读：GET</li>
+<li>写：PUT</li>
+<li>新建：POST</li>
+<li>删除：DELETE</li>
+<li>获得元信息：HEAD</li>
+<li>获得对该资源的可用操作：OPTIONS</li>
+</ul>
+
+
+<p>基于这样的设计，我们把权限信息设计为这样的json结构：</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/permission-pattern-in-restful-paas/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -224,6 +280,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/permission-pattern-in-restful-paas/">Restful API的权限设计思考</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/jvm/">我理解的JVM</a>
       </li>
     
@@ -248,7 +308,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - Gavin Huang -
+  Copyright &copy; 2015 - Gavin Huang -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
