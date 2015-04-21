@@ -4,7 +4,7 @@
   <title><![CDATA[Gavin on Backend Technology]]></title>
   <link href="http://gavinhuang.github.io/atom.xml" rel="self"/>
   <link href="http://gavinhuang.github.io/"/>
-  <updated>2015-04-21T15:54:05+08:00</updated>
+  <updated>2015-04-21T16:36:27+08:00</updated>
   <id>http://gavinhuang.github.io/</id>
   <author>
     <name><![CDATA[Gavin Huang]]></name>
@@ -20,7 +20,7 @@
     <id>http://gavinhuang.github.io/blog/architecture-pattern</id>
     <content type="html"><![CDATA[<h1>引言</h1>
 
-<p>最近难得有点空闲时间, 花了点精力了解了下架构的相关知识. Java程序员大多听说过GOF的设计模式, 而软件架构领域也不例外, O&#8217;reilly的开源电子书&lt;<Software architecture patterns>>介绍了常用的五种架构模式. 其中有我本人有实际开发经验的就有四种,另外一个模式也是目前云计算领域比较流行的模式.
+<p>最近难得有点空闲时间, 花了点精力了解了下架构的相关知识. Java程序员大多听说过GOF的设计模式, 而软件架构领域也不例外, O&#8217;reilly的开源电子书《Software architecture patterns》介绍了常用的五种架构模式. 其中有我本人有实际开发经验的就有四种,另外一个模式也是目前云计算领域比较流行的模式.
 这些模式着眼于不同的角度,我根据我认为从小到大的顺序分别介绍一下.</p>
 
 <!-- more -->
