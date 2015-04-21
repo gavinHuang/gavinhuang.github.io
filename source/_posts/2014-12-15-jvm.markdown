@@ -31,7 +31,8 @@ categories:
 * 程序技术器
 
 如下图所示：
-![jvm architecture][http://shyamalmadura.files.wordpress.com/2012/11/jvm_architecture3.png]
+{% img http://shyamalmadura.files.wordpress.com/2012/11/jvm_architecture3.png %}
+
 (From: http://shyamalmadura.files.wordpress.com/2012/11/jvm_architecture3.png)
 
 其中，“程序计数器(PC Register)”是提到较少的概念，其实主要用来记录当前线程的当前指令的内存地址，所以每个线程都会有一个对应的PC Register。
@@ -56,7 +57,8 @@ categories:
 java.lang.OutOfMemoryError: PermGen space
 这样的错误。
 顾名思义，上述错误中的PermGen space是java堆里的一个区域，除了这个区域，java堆中还有其他区域，如下图所示：
-![JVM Model][https://autofei.files.wordpress.com/2012/04/jvm_model.jpg]
+{% img https://autofei.files.wordpress.com/2012/04/jvm_model.jpg %}
+
 [From: https://autofei.files.wordpress.com/2012/04/jvm_model.jpg]
 
 其中Permanent  Space严格来说并不是java堆的组成部分，通常也不接受GC的管理。以上的划分并不是说将java堆物理地分成了三大块，而是GC程序，根据算法需要来划分的逻辑分区，即GC的基本思想是分代收集，分而治之。一个对象刚被创建的时候，是没有任何”信用“的，所以被放在GC监管很频繁的区域中：新生代。如果这个对象经过几轮洗礼，依然被证明是存活的，则表示这个对象足够老资格，会被转移到老年代中，老年代中的GC发生频率要小很多。
@@ -153,7 +155,8 @@ The dictionary definition of polymorphism refers to a principle in biology in wh
 除此之外，程序员也可通过自定义的类加载器来加载指定的其他类文件。有点需要注意的是不同的类加载器加载的类可以被理解为有不同的平行世界，哪怕是同一个类文件，如果被不同的类加载器加载的话，会在方法区存在两个类文件，因此判断类型是否相同的操作也会返回false。由于任意
 所以，类加载器的设计最好遵循一种协议，以确保java核心类或公共类在应用范围内不需要被重复加载，并可以允许用户定义自己的类加载器，并加载用户指定的类。这种协议可以通过下面的图来表示：
  
-![class loader][http://images.cnblogs.com/cnblogs_com/yayagepei/classLoader.jpg]
+{% img http://images.cnblogs.com/cnblogs_com/yayagepei/classLoader.jpg %}
+
 From:http://images.cnblogs.com/cnblogs_com/yayagepei/classLoader.jpg
 
 开发者可以通过扩展SystemClassLoader，并复写findClass方法实现自己的类查找和加载逻辑，并遵循这样的规则：
