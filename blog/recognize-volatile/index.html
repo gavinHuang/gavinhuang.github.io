@@ -1,0 +1,317 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>重新认识volatile - Gavin on Backend Technology</title>
+  <meta name="author" content="Gavin Huang">
+
+  
+  <meta name="description" content="误解 一直以来，我是这么理解volatile关键字的：该修饰符修饰的变量将不会被缓存（寄存器、处理器二级缓存等），而是直接写入主内存中或从直接主内存中读取。如此，不同的线程间对该变量的读/写到的值都是最新的，也可确保在多线程条件下的正确性，至于什么才叫正确、为什么必须要正确，之前并没有多想。 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://gavinhuang.github.io/blog/recognize-volatile">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Gavin on Backend Technology" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Gavin on Backend Technology</a></h1>
+  
+    <h2>backend and more</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:gavinhuang.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">重新认识volatile</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-09-26T18:15:40+08:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>6:15 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h3>误解</h3>
+
+<p>一直以来，我是这么理解volatile关键字的：该修饰符修饰的变量将不会被缓存（寄存器、处理器二级缓存等），而是直接写入主内存中或从直接主内存中读取。如此，不同的线程间对该变量的读/写到的值都是最新的，也可确保在多线程条件下的正确性，至于什么才叫正确、为什么必须要正确，之前并没有多想。</p>
+
+<p>最近拜读了infoq的mini书：《深入理解Java内存模型》（<a href="http://www.infoq.com/cn/minibooks/java_memory_model">http://www.infoq.com/cn/minibooks/java_memory_model</a> ），让我重新认识了Volatile关键字的真实意义和虚拟机的实现机制。本文以本人对volatile的目的、实现等为线索，对该书中volatile部分叙述重新整理，并结合相关资料，试图对volatile做一个个人总结，希望对读者也有所裨益。</p>
+
+<h3>Volatile的真正作用</h3>
+
+<p>开门见山地说，Volatile修饰的变量可以作为线程间协作的“信号量”，此信号量从一个线程被“传递”到另外一个线程，以达到线程协作的目的。从这个角度上说，volatile与“锁”或Synchronized关键字类似，都能达到线程协作的目的。</p>
+
+<!-- more -->
+
+
+<p>但是，从volatile的基本含义(Java官方文档: <a href="http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.3.1.4">http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.3.1.4</a>) 并不能得出上述结论：</p>
+
+<blockquote><p>The Java programming language allows threads to access shared variables (§17.1). As a rule, to ensure that shared variables are consistently and reliably updated, a thread should ensure that it has exclusive use of such variables by obtaining a lock that, conventionally, enforces mutual exclusion for those shared variables.
+The Java programming language provides a second mechanism, volatile fields, that is more convenient than locking for some purposes.
+A field may be declared volatile, in which case the Java Memory Model ensures that all threads see a consistent value for the variable (§17.4).</p></blockquote>
+
+<p>由上述定义可见，volatile是一个仅仅针对被修饰变量（的值）在不同线程中的一致性、可靠性而采取的效果类似“锁”的一种机制，但并未提及为什么通过对变量可见性的控制，就能达到线程协作的目。为解答这个问题，需要引入一个概念：</p>
+
+<h3>指令重排</h3>
+
+<p>这篇文章: <a href="http://kenwublog.com/illustrate-memory-reordering-in-cpu">http://kenwublog.com/illustrate-memory-reordering-in-cpu</a> 介绍了指令重排的背景。简单来说，编译器、CPU出于性能优化的目的会对程序员的指令（java源代码）的顺序进行适当调整，调整的规则不同的处理器类型有不同的策略，但都一个一条底线：有数据依赖的指令不会被重排。所谓数据依赖性是指：
+两个操作访问同一个变量，并且两个操作之中至少有一个是写操作，则这两个操作具有数据依赖。
+注：常见的x86处理器，不仅在有数据依赖的指令间不能重排，而且禁止了绝大部分指令重排，只允许使用StoreLoad类型的重排，即“写读”操作的重排。</p>
+
+<p>所以Java虚拟机面临的问题是，如何既保证程序按照程序员的意图和顺序被执行(as-if-serial)，又能利用编译器、处理器的重排机制实现代码的优化。Java通过在指令之间插入内存屏障指令（以下省略“指令”，直接称为内存屏障）来达到这一目的。内存屏障是能够被处理器识别的，确保屏障指令前/后的用户指令不被重排的特殊指令。读和写的两种操作排列组合形成如下可能：</p>
+
+<ul>
+<li>LoadLoad：  确保该指令之前的 “读取” 指令，在该指令之后的 “读取” 指令之前执行，从内存角度来说：“之前的指令” 首先从主内存装载变量之后，”之后的指令“ 才能装载</li>
+<li>LoadStore： 确保该指令之前的 “读取” 指令，在该指令之后的 “写入” 指令之前执行，从内存角度来说：“之前的指令” 首先从主内存装载变量之后，”之后的指令“ 才能被写入主内存。</li>
+<li>StoreStore：确保该指令之前的 “写入“ 指令，在该指令之后的 “写入” 指令之前执行，从内存角度来说：“之前的指令” 首先写入主内存（对其他线程可见）之后，“之后的指令”才能写入到主内存中。</li>
+<li>StoreLoad： 确保该指令之前的 “写入” 指令， 在该指令之后的 “读取” 指令之前执行，从内存角度来说： “之前的指令” 写入主内存，对其他线程可见（也可理解为尽到了通知的义务）之后，“之后的指令” 才能执行。</li>
+</ul>
+
+
+<h4>Volatile的重排规则</h4>
+
+<p>至此，我们可以回头看看Volatile的基本特性:</p>
+
+<ul>
+<li>当写一个Volatile变量时，要求该线程把变量对应的值刷新到主内存中。</li>
+<li>当读一个Volatile变量时，线程要将该变量在本地内存中的值置为无效，而从主内存中读取。</li>
+</ul>
+
+
+<p>为实现上述特性，Java内存模型（具体来说是JSR133）给Volatile定义了如下重排规则：</p>
+
+<ol>
+<li>当第一个操作是Volatile读时，不能与其后的任何操作进行重排</li>
+<li>当第二个操作是Volatile写时，不能与之前的任何操作进行重排（此处有些疑问，应该只需不与写操作重排即可）</li>
+<li>当 第一个操作是Volatile写，第二个操作是Volatile读时，不能进行重排。</li>
+</ol>
+
+
+<p>通过以上的规则，结合如下代码：
+Thread-write:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">volatile</span> <span class="kt">boolean</span> <span class="n">readyFlag</span><span class="o">;</span>
+</span><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">value</span><span class="o">=</span><span class="mi">100</span><span class="o">;</span><span class="c1">//该变量可以被看成是消息体</span>
+</span><span class='line'><span class="n">readyFlag</span><span class="o">=</span><span class="kc">true</span><span class="c1">//表示消息已经就绪或发送完毕</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Thread-read:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="k">if</span> <span class="o">(</span><span class="n">readyFlag</span><span class="o">){</span><span class="c1">//消息已就绪</span>
+</span><span class='line'>  <span class="n">myValue</span><span class="o">=</span><span class="n">value</span><span class="c1">//读取最新的值，即接收消息</span>
+</span><span class='line'>  <span class="o">...</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>不难得出，volatile除了保证自身的值是volatile的之外，还可控制其他变量的行为，实现线程协作。</p>
+
+<h3>延伸：重排规则的实现</h3>
+
+<p>由于Java内存模型通过插入内存屏障到达控制处理器的重排规则的目的，为了达成如上的规则，需要在二进制指令中的合适位置插入合适的屏障指令，下表列出了Volatile 的3个重排规则需要实现的屏障：</p>
+
+<ol>
+<li>第一个操作是Volatile读时：在该指令之后插入：
+
+<ol type="a">
+<li>LoadLoad指令（控制之后的读操作不重排）；</li>
+<li>插入LoadStore指令（控制之后的写操作不重排）</li>
+</ol>
+</li>
+<li>第二个操作是Volatile写时：在该指令之前插入一个StoreStore指令（控制之前的写操作不重排）</li>
+<li>第一个操作是Volatile写   ：在该指令之后插入StoreLoad指令，以控制之后的Volatile读操作不被重排</li>
+</ol>
+
+
+<p>补充条件： 由于很难判断Volatile读/写操作是否为线程执行的最后/第一个指令，所以：</p>
+
+<ul>
+<li>在Volatile写之后插入StoreLoad指令</li>
+<li>在Volatile读之前插入StoreLoad指令</li>
+</ul>
+
+
+<p>如此一来，涉及Volatile的指令前后将布满了内存模型要求的内存屏障变量，这样的结果虽然可以确保程序的正确性(as-if-serial)，但却影响了性能，所以Java内存模型规定还可以在此基础上进行优化，比如将两个内存屏障（其中一个为上一个指令之后的屏障，另一个为下一个指令之前的屏障）进行合并、省略。</p>
+
+<blockquote><p>Written with <a href="https://stackedit.io/">StackEdit</a>.</p></blockquote>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Gavin Huang</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2014-09-26T18:15:40+08:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>6:15 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/java/'>java</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://gavinhuang.github.io/blog/recognize-volatile/" data-via="" data-counturl="http://gavinhuang.github.io/blog/recognize-volatile/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/nosql-transaction/" title="Next Post: 如何让nosql数据库支持事务">如何让nosql数据库支持事务 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/architecture-pattern/">五种常见的架构模式</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/permission-pattern-in-restful-paas/">Restful API的权限设计思考</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/jvm/">我理解的JVM</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/nosql-transaction/">如何让nosql数据库支持事务</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/recognize-volatile/">重新认识volatile</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Gavin Huang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

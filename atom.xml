@@ -1,0 +1,947 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Gavin on Backend Technology]]></title>
+  <link href="http://gavinhuang.github.io/atom.xml" rel="self"/>
+  <link href="http://gavinhuang.github.io/"/>
+  <updated>2015-04-21T16:36:27+08:00</updated>
+  <id>http://gavinhuang.github.io/</id>
+  <author>
+    <name><![CDATA[Gavin Huang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[五种常见的架构模式]]></title>
+    <link href="http://gavinhuang.github.io/blog/architecture-pattern/"/>
+    <updated>2015-04-20T16:30:33+08:00</updated>
+    <id>http://gavinhuang.github.io/blog/architecture-pattern</id>
+    <content type="html"><![CDATA[<h1>引言</h1>
+
+<p>最近难得有点空闲时间, 花了点精力了解了下架构的相关知识. Java程序员大多听说过GOF的设计模式, 而软件架构领域也不例外, O&#8217;reilly的开源电子书《Software architecture patterns》介绍了常用的五种架构模式. 其中有我本人有实际开发经验的就有四种,另外一个模式也是目前云计算领域比较流行的模式.
+这些模式着眼于不同的角度,我根据我认为从小到大的顺序分别介绍一下.</p>
+
+<!-- more -->
+
+
+<h2>分层架构</h2>
+
+<p>分层架构应该是最常见的架构模式,SSH(Structs, Spring, Hibernate)简直就是事实标准. 分层架构通常有如下几个层次:</p>
+
+<ul>
+<li>展现层</li>
+<li>业务逻辑层</li>
+<li>持久层</li>
+<li>数据库层</li>
+</ul>
+
+
+<p>有时也将业务逻辑层和持久层合二为一.</p>
+
+<h4>优势</h4>
+
+<p>分层架构最大的优势是每层可以只关注一种需求,更严谨的叫法应该叫&#8221;separation of concern&#8221;. 相对早期的架构,这样的模式更清晰可维护.</p>
+
+<h4>劣势</h4>
+
+<p>举个例子: 在Palm的云服务时期, 云端服务也是一个分层架构,但是同时也是一个单一应用(monolithic application),这样导致的结果就是虽然我们都有不同的层次, 但各个小组都在同一个应用项目上开发, 代码膨胀并且相互影响, 部署起来也比较麻烦.
+比如我的小组主要负责应用商店的搜索功能, 而另外一个小组负责帐号管理功能, 我们之间的关联其实比较低, 但却要在同一个非常庞大的(还有如备份服务,消息服务等多个服务)代码项目上做开发, 经常出现代码冲突, 部署计划也经常不协调, 结果是开发和运维同事都苦不堪言.
+于是后来重构,引入了下面要讲的微服务架构</p>
+
+<h2>微服务架构</h2>
+
+<p>微服务的基本理念是,一个服务只负责一个功能.</p>
+
+<p>一个普通的WEB应用,通常都要处理从帐号注册, 管理, 安全,到具体的业务功能. 而这些功能都集中在一个应用里. 微服务的理念就是在所有的功能里, 将相似的一组功能单独成为一个独立的应用. 比如我们的组织里将Palm的云服务分为账户管理, 登录管理(oauth等), 搜索功能, 存储功能等.</p>
+
+<p>p.s. 这种架构模型正好处在cube scale模型的y-axis模型(其他的两个分别是y-axis和z-axis, 详见:<a href="http://akfpartners.com/techblog/2008/05/08/splitting-applications-or-services-for-scale/">http://akfpartners.com/techblog/2008/05/08/splitting-applications-or-services-for-scale/</a>)</p>
+
+<h4>优势</h4>
+
+<p>微服务架构简直就是程序员的福音, 运维的噩梦(可能没那么遭 :P). 开发的同事可以根据自己的喜好和业务的实际需要选择开发语言或技术栈, 或采用不同的架构, 而实际部署上也可以根据不同性能需求分配不同的资源(x-axis). 这也为敏捷开发提供了基础.</p>
+
+<h4>劣势</h4>
+
+<p>开发调试会变得更麻烦. 尤其各个服务相互依赖的时候,一个服务出问题所有的服务都会受牵连. 这个时候一个稳定的, 易部署的开发和集成环境变得非常重要. 关于如何利用目前的虚拟化和云计算技术搭建集成环境也是一个非常吸引人的话题. 有机会可以另开话题讨论.</p>
+
+<h2>事件驱动架构</h2>
+
+<p>如果业务逻辑较复杂, 或横跨多个应用时, 如何管理这些业务流程成为一个问题.</p>
+
+<p>事件驱动的架构将复杂的业务逻辑划分成一个个独立的时间处理模块,各个模块之间没有紧耦合的关系, 而是通过关注特定的事件输入,经过处理后产生特定的事件输出, 这个输出事件可以成为另外一个事件处理器的输入. 建立事件的输出与输入之间联系的可以是第三方中间件,比如消息队列. 根据事件消息的协调方式, 该模式可以再分为&#8221;协调者&#8221;的事件驱动模式和&#8221;代理人&#8221;的事件驱动模式.</p>
+
+<p>基于这样的模式的产品诸如jBPM等.</p>
+
+<h4>优势</h4>
+
+<p>划分后的事件处理器逻辑简单,扩展和维护都比较简单. 并且这种架构的优势一旦和非阻塞的编程框架结合,可以给性能带来极大的提升.</p>
+
+<p>许多开发语言都采用一个请求对应一个线程(或进程)的模式. 这样的模式的代码通常比较清晰, 也比较容易调试, 因此被广泛采用. 但是随着并发量的上升和微服务架构的引入, 一个问题会比较突出: 流程中任意一个地方出现阻塞请求,则整个线程或进程被挂起.当并发数量逐渐提升后,对CPU和内存压力也逐渐提高,可能CPU花在线程切换的时间比实际处理逻辑的时间还要多, 造成了很大的浪费.</p>
+
+<p>而非阻塞的编程模型则没有这样的问题, 任何一个原先需要阻塞整个线程/进程的操作都不会造成整个线程/进程的阻塞.</p>
+
+<h4>劣势</h4>
+
+<p>由于各个事件处理器被划分,并且可能部署在分布式的环境下,造成一个事件处理流程不能纳入一个单独的事务管理单元.</p>
+
+<h2>微核心架构(插件架构)</h2>
+
+<p>微核心顾名思义就是核心处理单元比较轻量, 而将主要的业务逻辑交由插件来处理. 这么说可能你会将插件和上文提到的事件处理单元相互混淆. 我认为他们的主要区别在于从不同的角度观察和分析问题, 插件模型关注插件与核心的关系, 而事件处理其则只能说明, 该单元的输入和输出为事件. 这两个特性并不相互排斥, 事实上我就开发过一个系统可以同时称为事件驱动和微核心架构.</p>
+
+<h4>优势</h4>
+
+<p>将业务逻辑以插件的模式封装, 并以合适的接口与主系统相连, 是对业务的一个清晰划分.并且也对业务逻辑的扩展提供了非常好的基础.</p>
+
+<h4>劣势</h4>
+
+<p>调试相对麻烦</p>
+
+<h2>基于空间的架构(或者叫云架构更合适)</h2>
+
+<p>本人对这个模式的理解相对模糊, 只能尝试阐述下自己的理解. 我认为这个模式有两个关键词: 去中心化(的数据库), 自动扩展.</p>
+
+<p>第一个关键词是修饰数据库的, 也就是说这个模式要求分布式的数据存储, 建议以分布式的内存为宜, 我个人认为并非一定要内存存储, 因为是否用内存存储主要基于读写速度, 目前一些NOSQL数据库即使不采用内存读写也可以提供较快的读写速度, 比如LevelDB. 分布式的数据存储带来的问题是如何实现数据的同步, 为此需要有数据同步引擎来处理同步.</p>
+
+<p>另外一个关键词是自动扩展. 自动扩展包括计算节点(可以理解为应用层)和数据节点.</p>
+
+<h2>为什么MVC不在此列</h2>
+
+<p>一个非常常见的面试题(尤其是面试面向对象语言的同学)是:你了解哪些设计模式? 不少同学会回答MVC模式. 我个人有点犹豫是不是该MVC模式和其他设计模式并列, 但是我认为MVC模式可以认为是一个设计架构的模式. 尤其是目前MVC模式已经不只是在服务器端了,在javascript的客户端编程中也大量应用了MVC模式(如:angular).</p>
+
+<p>所以MVC模式有没有被认为是一个架构模式并不重要,因为模式本身就是人们对解决问题最佳实践的一个总结, 一个模式的概念也会不停地演进, 我也相信一个架构师在设计架构的时候不仅仅只有本文所列的五中模式可供参考.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Restful API的权限设计思考]]></title>
+    <link href="http://gavinhuang.github.io/blog/permission-pattern-in-restful-paas/"/>
+    <updated>2015-02-28T10:08:40+08:00</updated>
+    <id>http://gavinhuang.github.io/blog/permission-pattern-in-restful-paas</id>
+    <content type="html"><![CDATA[<h3>前言</h3>
+
+<p>基于Restful风格的API设计规范已经被广泛接受。鄙公司也不例外，我们的系统基于Micro Service的理念，各个Services（服务）将功能发布为遵循Restful风格的API，每个服务即成为可对外发布的独立单元，服务之间的组合又可成为新的服务，称为BaaS（Back-end as a Service)。</p>
+
+<p>由于各个服务需要单独对外提供服务，并且各个服务之间的业务差别比较大，所以在如何控制资源的权限，确保资源不被意外篡改和非法获取，又不违反Micro-Service的理念（单一业务职责）成为每个服务都要考虑的问题，即如何在开放和安全上做到平衡。</p>
+
+<h3>基本结构</h3>
+
+<p>我们总结下来，基本原则当然是遵循Restful规范 （为什么必须遵循Restful规范？如果这是个问题的话，请参考：<a href="http://stackoverflow.com/questions/1368014/why-do-we-need-restful-web-services">http://stackoverflow.com/questions/1368014/why-do-we-need-restful-web-services</a> ）。</p>
+
+<p>由于功能API都遵循Restful，所以我们把权限的分为如下几种：</p>
+
+<ul>
+<li>读：GET</li>
+<li>写：PUT</li>
+<li>新建：POST</li>
+<li>删除：DELETE</li>
+<li>获得元信息：HEAD</li>
+<li>获得对该资源的可用操作：OPTIONS</li>
+</ul>
+
+
+<p>基于这样的设计，我们把权限信息设计为这样的json结构：</p>
+
+<!-- more -->
+
+
+<p>目标：resource/_permissions
+内容：</p>
+
+<pre><code>
+    {
+        "GET": {
+            "user": [
+                "user1",
+                "user2"
+            ],
+            "role": [
+               "role1",
+               "role2"
+            ],
+            "group": [
+                "group1",
+                "group2"
+            ]
+        },
+        "PUT": {
+            "user": [
+                "user1"
+            ],
+            "role": [
+                "role1"
+            ],
+            "group": [
+                "group1"
+            ]
+        }
+    }
+</code></pre>
+
+
+<p>上述的权限设置可以绑定的不同层级的资源上，可以实现对不同租户、不同粒度的资源控制。
+然而，这样的设计并不能解决所有问题，下面几个内容是我在工作中遇到的问题以及解决这些问题提的一些思路和实践。</p>
+
+<h3>问题1：面向用户还是面向资源？</h3>
+
+<p>面向用户的权限通常围绕用户的三级进行权限分配：企业（租户），组、角色等。这种方案描述的是</p>
+
+<pre><code>”用户拥有哪些资源的权限“</code></pre>
+
+
+<p>典型的权限信息如下：</p>
+
+<pre><code> /user/123
+    {
+        "user": {
+            "ID": "123",
+            "name": "abc",
+            "permissions": [
+                {
+                    "GET": "/product/{id}"
+                },
+                {
+                    "PUT": "/product/{id}"
+                }
+            ]
+        }
+    }
+    </code></pre>
+
+
+<p>而面向资源的权限则将权限信息直接分配给(Attach to)了一个资源，即通常说的ACL （Access Control List），他描述的是：</p>
+
+<pre><code>”资源可以被哪些用户访问“</code></pre>
+
+
+<p>两种方案的主要区别在于权限信息分别散落在：</p>
+
+<ul>
+<li>各个用户上</li>
+<li>各个资源上</li>
+</ul>
+
+
+<p>在基于Micro-Services的架构里，帐号信息通常由专门的服务维护，如果将权限定义为面向用户，意味着用户信息和权限信息有映射关系，而这种关系自然成为帐号服务需要维护的内容。但不同的业务服务有不同的权限类型（GET/PUT/DELETE/POST之外还有许多类型，下文会专门阐述）、资源类型、权限粒度，一个集中的服务很难维护权限信息的全集和变更。</p>
+
+<p>而如果将权限信息与资源绑定，则可以针对不同的资源类型设置不同的权限类型和权限粒度，比如对产品信息，除了基本的增删查改之外，还可以进行“搜索”操作，所以可以在“产品”资源下，增加“Search”的权限类型。</p>
+
+<p>然而，面向资源的权限方案存在粒度过细，维护困难的问题，所以许多系统在此基础上增加了“Policy&#8221;的概念，可以简化权限设置。比如Amazon的S3，除了提供ACL，还引入Policy的概念。</p>
+
+<p>Policy不需要特别指定哪些资源对哪些用户开放，只需根据通常的业务模式，划分成如下的几类：</p>
+
+<ul>
+<li>Private: Only Owner (usually creator) have permissions to a resource.</li>
+<li>Public: Other user have permission (read,write) to a resource</li>
+<li>Public_Read:所有用户可读</li>
+<li>Public_Write:所有用户可写</li>
+<li>Owner_Full_Control：资源创建者拥有全部权限</li>
+</ul>
+
+
+<p>可以说，面向资源的ACL加上面向资源的Policy，为解决Restful风格的API权限问题提供了一个优良的基础。</p>
+
+<h3>问题2：何时需要一个新的权限类型？</h3>
+
+<p>上文提到对一个GET权限对应于资源的读取操作，那么如果对”/product“的这样的资源类型（目录？）的GET权限，具体对应业务系统的什么操作呢？</p>
+
+<ul>
+<li>1）该资源类型下的所有对象的读权限</li>
+<li>2）该资源类型的相关属性的读取权限</li>
+<li>3）列出该资源类型下的所有ID</li>
+</ul>
+
+
+<p>根据HTTP的标准做法似乎是第三种操作（这也是Amazon S3的做法），但我认为第一种做法却更方便些，可以实现权限的层级结构，简化权限设置。即可以不对”/product“下的所有资源都分别设置GET权限，而只设置”product“的GET权限表示product下各个资源的GET权限。</p>
+
+<p>而对方案1和2种的中的两种操作的权限控制则需要增加新的权限类型：</p>
+
+<ul>
+<li>Property</li>
+<li>List</li>
+</ul>
+
+
+<p>这里列说我们所有的权限类型：
+元操作：</p>
+
+<ul>
+<li>GET</li>
+<li>PUT</li>
+<li>POST</li>
+<li>DELETE</li>
+<li>List</li>
+<li>Search</li>
+<li>Run</li>
+</ul>
+
+
+<h3>问题3：Sub-Resource还是Another Resource</h3>
+
+<p>上文提到权限信息最好跟资源绑定，比如，对一个资源 /product/123，有一个专门的信息表述该资源的权限信息，该信息本身也是一种资源，那么如何定义该资源的访问路径呢？一般来说，可以通过以下两种路径来定位</p>
+
+<ul>
+<li>/product/123/_permissions</li>
+<li>/permissions/product/123</li>
+</ul>
+
+
+<p>前一种是将权限信息视为产品信息的子资源，而后一种则将权限信息视为一种独立的资源，资源路径里包含产品路径只是作为维护“资源-权限”的映射关系的纽带。
+在我们的实践里，通常采用第一种方案，即将包括权限信息在内的其他信息视为产品资源的子资源，这些信息包括：</p>
+
+<ul>
+<li>_properties: 属性</li>
+<li>_configuration：配置</li>
+<li>_permissions：权限</li>
+</ul>
+
+
+<h3>问题4：是资源还是动作</h3>
+
+<p>问题2提到了几种非标准的HTTP Method的元操作类型：如RUN，Search、List，这些操作并不能直接对应到真实的HTTP method上，即对一个资源的GET操作可以是这样的：</p>
+
+<pre><code>GET /resource/id</code></pre>
+
+
+<p>而对一类资源（类型）的搜索操作却不能这样：</p>
+
+<pre><code>SEARCH /resource/</code></pre>
+
+
+<p>因为没有Search这个http method （虽然<a href="https://datatracker.ietf.org/doc/rfc5323/">https://datatracker.ietf.org/doc/rfc5323/</a> 中说明Search也是一个http method)。</p>
+
+<p>目前我们的做法是将这样的操作（动作）转为一个下划线开头的路径（类似子资源），比如搜索操作转变为这样：</p>
+
+<pre><code>GET /resource/id/_search </code></pre>
+
+
+<p>或</p>
+
+<pre><code>POST /resource/_search</code></pre>
+
+
+<p>虽然可以说Search也算http method，但是却并不是所以的软件、设备都支持，所以另外一个方案是采用X-HTTP-Method-Override的方法。
+比如下面的请求</p>
+
+<pre><code>
+GET /resource/
+X-HTTP-Method-Override:Search
+</code></pre>
+
+
+<p>表示对/resource资源的search操作。（在spring中有HiddenHttpMethodFilter，可以根据头信息修改客户端的原始HttpMethod）。</p>
+
+<h3>问题5：选哪条路径</h3>
+
+<p>当一个实体（一个资源）可以有多条路径到达时，对外的API应该选用哪条路径？这直接关系到权限控制是否有漏洞，比如权限设置某资源不能被用户访问，但用户却可以通过另外一个URL路径访问到该资源。</p>
+
+<p>比如权限设置规定用户不能访问：</p>
+
+<pre><code>/review/{reviewId}</code></pre>
+
+
+<p>但有可能用户可以通过如下路径访问同一个资源：</p>
+
+<pre><code>/product/{productId}/review/{reviewId}</code></pre>
+
+
+<p>类似的问题还有：</p>
+
+<pre><code>
+/enterpriseId/user/userId
+/enterpriseId/group/groupId/user/userId
+/enterpriseId/role/roleId/user/userId
+</code></pre>
+
+
+<p>由于面向资源的权限设置的局限性，同一个实际资源，由不同的url表示时，即认为是不同的资源，也即可以拥有不同的权限，所以要控制不同路径的资源的权限设置的一致性，最简单的办法是在API层面只发布一个路径。而如何在这些路径中选择一个合适的路径问题并没有统一的答案，需要根据实际情况灵活处理，但是有几个原则可以参考：</p>
+
+<ul>
+<li>原则一： 是否有从属关系：user和role，group之间，并没有硬性的从属关系，一个用户可以没有group或者role而存在。</li>
+<li>原则三： 云平台的多租户特性。enterprise的隔离性</li>
+<li>原则二： 简单，开发友好、测试友好，用户友好</li>
+</ul>
+
+
+<p>比如上述问题的用户信息，由于用户和组或角色之间并没有从属关系，所以建议以用户信息为根路径为好。</p>
+
+<h3>问题6：当一个操作涉及到多个资源时，如何控制权限？（跨资源操作）</h3>
+
+<p>目前为止，权限信息与一个或一类资源绑定，并没有提到涉及到多个资源的操作的权限控制。典型的跨资源操作如：拷贝, 批量删除多个资源。</p>
+
+<pre><code>
+delete /resourceType/id1,id2,id3
+copy /resourceType/source?to=resourceType/target 
+</code></pre>
+
+
+<p>这个时候Restful的弱点开始显现，因为这类问题是一个业务处理，而不是访问一个资源。但是也有一个折中的办法：</p>
+
+<p>由于copy是一个不常用的、不被广泛支持的的http method，所以可以认为这个操作可以可以分解为：</p>
+
+<pre><code>
+对原资源的读取操作 (GET) +目的资源的写入操作 (PUT)
+</code></pre>
+
+
+<p>权限控制器需要分别判断两个资源的相应权限。</p>
+
+<p>当然，如果需要更精细的控制的话，应该有单独的COPY操作，因为除了基本的读和写操作之外，复制的另一个含义是服务器端代替客户端执行读和写操作，比一般的由客户端发起的读写操作更复杂，更占用系统资源。在一般的系统中可以忽略这个问题。</p>
+
+<p>所以从权限设置的角度来说，这类操作应该由多个操作组合而来。</p>
+
+<h3>问题7：如何处理同一个资源的同一类操作的不同方式的权限问题</h3>
+
+<p>我最近在一个文件存储服务的设计中碰到的一个问题：
+新建（上传）一个文件通过POST方法实现，对应的操作权限也为POST，但是新上传一个文件还有另外一个方式，即新建一个上传任务，并将待上传文件分块上传，最后提交任务完成上传。</p>
+
+<p>这里一个矛盾在于，从理论上来说，一个上传任务也是一个资源，他也有 POST/PUT/DELETE的操作，他的权限应该是独立于对一个资源操作的权限的，但实际上他们却相互关联，只有对一个文件有POST或PUT权限，才能新建一个上传job，并且更新这个job，最后提交这个job；</p>
+
+<p>为了免去维护文件操作权限和文件上传任务权限之间的一致性，目前的方案是：
+将上传job的三步视为上传操作的三个子操作，他们跟普通上传操作享有同样的权限、HTTP Method，即：不管是新建job、更新job、提交job，他们在API中对应的http method都为POST（新上传文件）或PUT（更新文件），这样就可以简单判断对文件的新建、更新权限来控制文件上传任务的权限。</p>
+
+<h3>结尾</h3>
+
+<p>除了上述的几个问题之外还有许多其他问题，都需要在方便和标准之间做一个平衡。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[我理解的JVM]]></title>
+    <link href="http://gavinhuang.github.io/blog/jvm/"/>
+    <updated>2014-12-15T10:22:56+08:00</updated>
+    <id>http://gavinhuang.github.io/blog/jvm</id>
+    <content type="html"><![CDATA[<h3>前言</h3>
+
+<p>作为一个Java程序员，JVM（Java虚拟机，下简称虚拟机）将执行我们编写的代码，并搞定包括内存管理之类的工作，可以说虚拟机是我们的服务提供商，我们是他的客户。从这个角度来说，虚拟机的架构和原理不是必须掌握的知识。然而总会有一些时刻会让我们恨不得把虚拟机扒个精光看透里面的所有花样，搞明白为什么我们的程序会出现诸如“OutOfMemoryError: ”、”StackOverFlow”的错误，或者为什么我们的程序就是那么慢，为什么就不能承受大流量的冲击呢。
+本文是对本人对虚拟机的知识的一个总结，感谢以下几个信息来源：</p>
+
+<ul>
+<li>《深入Java虚拟机》</li>
+<li>Java 内存模型：Infoq的迷你书</li>
+<li>Java深度探险：infoq的迷你书</li>
+<li><a href="https://docs.oracle.com/javase/specs/jvms/se7/html/index.html:">https://docs.oracle.com/javase/specs/jvms/se7/html/index.html:</a> java官方文档</li>
+</ul>
+
+
+<p>内容大致分为如下几个方面：</p>
+
+<ol>
+<li>虚拟机内部架构和Java内存模型</li>
+<li>虚拟机支持的特性，如多线程，并发控制，多态的实现、类加载</li>
+</ol>
+
+
+<!-- more -->
+
+
+<h3>第一部分 虚拟机内部架构和Java内存模型</h3>
+
+<p>当我们谈论虚拟机的时候，被提到最多的一定是“xx区”、堆、栈等。这些概念的确是了解虚拟机的基础。准确地来说，这些是虚拟机的内存数据空间，包括如下逻辑上的区域：</p>
+
+<ul>
+<li>堆</li>
+<li>栈</li>
+<li>本地方法栈</li>
+<li>方法区</li>
+<li>常量池</li>
+<li>程序技术器</li>
+</ul>
+
+
+<p>如下图所示：
+<img src="http://shyamalmadura.files.wordpress.com/2012/11/jvm_architecture3.png"></p>
+
+<p>(From: <a href="http://shyamalmadura.files.wordpress.com/2012/11/jvm_architecture3.png">http://shyamalmadura.files.wordpress.com/2012/11/jvm_architecture3.png</a>)</p>
+
+<p>其中，“程序计数器(PC Register)”是提到较少的概念，其实主要用来记录当前线程的当前指令的内存地址，所以每个线程都会有一个对应的PC Register。
+与PC Register相对应，栈主要记录方法的本地变量和计算的总结结果。由于Java栈只是个逻辑概念，所以其实际所使用的内存有可能也在堆中分配，并且Java栈的大小可以通过JVM启动参数来调节：</p>
+
+<ul>
+<li>-Xss:1024或</li>
+<li>-XX:ThreadStackSize=1024 (Sun 虚拟机专用)</li>
+</ul>
+
+
+<p>当一个线程调用层级太多时，意味着有太多的本地变量和中间结果需要保存，Java栈会变得非常深，(通常来说Java栈的每一个元素（即栈帧）是固定大小的，忘了从哪里看来的了）当内存消耗超过上述参数指定的内存大小时，虚拟机会抛出StackOverflowError。有些虚拟机支持动态扩充栈的大小，所以可以缓解上述问题，但当虚拟机没有足够的内存给Java栈时，虚拟机会抛OutOfMemoryError，也即跟堆内存不够时同样的错误。</p>
+
+<p>方法区主要保存虚拟机加载的类信息。这些类信息原本以Class文件的形式保存在文件中，虚拟机启动时或必要时（什么时候加载类信息留在后面说）会通过类加载机制将类信息放在内存中，而这块内存就叫做方法区。而方法区中的类信息是以对象的形式存在，即类信息也可以在程序中被应用，最常见的引用方式是：SomeClass.class.getClassLoader()。其中的SomeClass为类对象而不是实例对象，SomeClass.class就是这个类对象的一个指向自己类信息的静态变量。
+除了类本身的信息，方法区还包括一个常量池（每个类都有一个），这些常量池通常是通过程序定义的final的变量值或编译器优化后的变量值（有些变量虽然没有指定定义为常量，但编译器通过优化算法发现其实该变量并不会被改动，也即是个常量）。
+既然方法区也是一个内存区域，就必定存在内存不够的情况，而且这种情况通常发生在程序启动时（通过OSGI动态加载的模块也存在此风险）。比如tomcat里的webapp太多时（或一个webapp项目引入了太多的类），在启动时会抛：java.lang.OutOfMemoryError: Metaspace。
+跟Java栈一样，方法区也可以实际由堆来分配内存，并且可以通过虚拟机启动参数设置大小：</p>
+
+<ul>
+<li>-XX:MetaspaceSize=xx 方法区大小设置</li>
+<li>-XX:MaxMetaspaceSize=30m 最大方法区大小设置</li>
+</ul>
+
+
+<p>堆或者叫Java堆是开发人员打交道最多的，对象的创建、GC（垃圾收集）、内存异常（如OutOfMemoryError）都发生在这里。对象的创建没有太多花样，主要需要关注的是GC和GC引起的问题。
+垃圾回收
+垃圾收集是一个帮程序员“擦屁股”的机制，这个机制是Java和JVM上运行的其他语言的一大优势。但是也有这个”擦屁股“的机制都帮不上忙的时候，通常就会发生：
+java.lang.OutOfMemoryError: PermGen space
+这样的错误。
+顾名思义，上述错误中的PermGen space是java堆里的一个区域，除了这个区域，java堆中还有其他区域，如下图所示：
+<img src="https://autofei.files.wordpress.com/2012/04/jvm_model.jpg"></p>
+
+<p>[From: <a href="https://autofei.files.wordpress.com/2012/04/jvm_model.jpg">https://autofei.files.wordpress.com/2012/04/jvm_model.jpg</a>]</p>
+
+<p>其中Permanent  Space严格来说并不是java堆的组成部分，通常也不接受GC的管理。以上的划分并不是说将java堆物理地分成了三大块，而是GC程序，根据算法需要来划分的逻辑分区，即GC的基本思想是分代收集，分而治之。一个对象刚被创建的时候，是没有任何”信用“的，所以被放在GC监管很频繁的区域中：新生代。如果这个对象经过几轮洗礼，依然被证明是存活的，则表示这个对象足够老资格，会被转移到老年代中，老年代中的GC发生频率要小很多。
+对象经历一次“洗礼”就是虚拟机运行一次GC收集操作，释放将死掉的对象（程序员只管生不管死，所以需要GC来收尸）所占用的内存。然而简单地“释放”内存还不够，否则会给java堆中留下太多内存碎片（还记得Windows的磁盘碎片整理吗？）不利于新对象的内存分配。虚拟机的应对策略是再将新生代分为三个区：Eden Space，Survivor Space（细分为From Space和To Space），新建对象时只放在Eden Space和From Space中，当GC发生时，将存活的对象（占总对象的比率通常很小）从这两个区复制到To Space，这样就把Eden Space和From Space给腾出来了，其中Eden Space还会继续接收新对象，而腾出来的From Space则会预留着给下次GC当”To Space“用。所以From Space和To Space只是相对的。
+同样，这些空间的大小是可以通过虚拟机启动参数来调节的，比如：</p>
+
+<ul>
+<li>-Xmx: JVM最大可用内存大小</li>
+<li>-Xms: JVM初始内存大小</li>
+<li>-Xmn: 年轻代大小，Sun推荐为堆大小的3/8（并且持久代一般固定为64M，所以年轻代增大，则意味着年老代的减小）</li>
+<li>-XX:NewSize=N设置年轻代初始大小</li>
+<li>-XX:SurviviorRatio=N,年轻代中Eden大小和Survivor区大小的比，比如N=4，则两个Survivor和Eden大小比为2：4。</li>
+<li>-XX:NewRatio=n,年轻代和年老代的比值
+讲到这里不得不提一下各种虚拟机参数的设置方式。通常的虚拟机参数有如下几种形式：</li>
+<li>-X[参数名]=[参数值]  标准的参数设置</li>
+<li>-XX:[参数名]=[参数值]  临时的（可能在新版本中有变更）参数设置</li>
+<li>-XX:[+|-][参数名]   通常用于Boolean类型的参数，比如：-XX:+DisableExplicitGC，就是设置参数DisableExplicitGC为True（因为默认是false），相反有些默认是true的参数就需要用减号来设置为false。</li>
+</ul>
+
+
+<p>刚才提到GC发生时需要找出仍然活着的对象，但是如何在杂乱无章的对象海洋里找到仍然存活的对象呢？以前有个模糊的概念认为可以通过应用计数来实现：一个对象被应用了，则计数值加1，应用被解除则减1。但是实际上这个方案并不可行，比如两个（或更多）对象相互循环引用，即使他们都已经不会被使用，计数器的值仍不为0。虚拟机采用的方法是从一个根对象开始（根对象可以是一个类加载器，或者是虚拟机认为合适的对象，比如一个线程对象）根据引用链，一步步找到对象（应该是采用了图的查找算法）。这些能被找到的对象就是“存活的对象“，其他的对象就是“死对象”。
+由于查找”死”对象的过程是一个耗时的工作，而且在查找过程中又有活对象不断“死去”，所以纯粹的垃圾回收的时候是不能有用户程序在运行的，但在实际的实现中，虚拟机在“时间停止“和”我的收集工作永远也没有尽头“之间做了一些平衡，不同的平衡的手段就产生了不同的垃圾回收算法，比如：</p>
+
+<ul>
+<li>Serial GC</li>
+<li>Parallel GC</li>
+<li>Concurrent Mark-Sweep GC (CMS)</li>
+<li>Garbage First GC</li>
+</ul>
+
+
+<p>除了上述四个算法还有另外一个Parallel Scavenge，属于新生代垃圾回收算法。
+Serial GC 已经很少用，目前只在客户端程序中做为默认的垃圾回收程序。而通常虚拟机通常都是以server模式运行，如果需要以客户端模式运行，则需要添加额外的参数：-client (-server为默认值)。至于client模式和server模式的区别，这个地址列了几个点：<a href="http://stackoverflow.com/questions/198577/real-differences-between-java-server-and-java-client">http://stackoverflow.com/questions/198577/real-differences-between-java-server-and-java-client</a>
+简单来说，区别在于-client注重减少启动时间和内存消耗，而-server则注重性能（通过编译优化，比如“aggressive inlining”）。我们能看得到的区别主要是默认的堆大小和GC算法。
+Parallel GC则是server模式下默认的垃圾回收算法，顾名思义，这个算法支持多线程的垃圾回收。
+CMS算法: 并发收集算法
+Garbage Frist GC:并发收集，并且将待收集区域划分为跟小的区块进行收集。
+可以通过如下参数设置虚拟机采用的垃圾回收算法：</p>
+
+<ul>
+<li>-XX:+UseSerialGC 使用串行垃圾回收算法</li>
+<li>-XX:+UseParallelGC 使用并行垃圾回收算法（年轻代）</li>
+<li>-XX:+UseParNewGC 设置年轻代并行回收（已经在Java5以后舍弃）</li>
+<li>-XX:+UseParallelOldGC 对老年代空间实行并行回收（默认为串行），Java6后才有</li>
+<li>-XX:+UseConcMarkSweepGC 打开并发垃圾回收算法</li>
+<li>-XX:+UseG1GC 使用G1（Java 7之后才有）</li>
+</ul>
+
+
+<p>总的来说，垃圾回收算法通常尝试在这些方面进行努力：</p>
+
+<ul>
+<li>并行还是串行</li>
+<li>移除死对象还是保存”活“对象后销毁所有</li>
+<li>不同的内存区域采用不同的收集策略</li>
+<li>同一个区域进行分块收集</li>
+</ul>
+
+
+<h3>第二部分：虚拟机支持的编程特性</h3>
+
+<h4>多线程和锁</h4>
+
+<p>程序员通过继承Thread类或者实现Runnable接口来实现多线程编程以充分利用多CPU的处理能力，这是程序员需要关心的，而剩下的则由JVM来实现。Java虚拟机为不同的线程创建不同的Stack 栈记录不同线程所需要的本地变量、操作数、中间结果等。线程对栈内数据的访问是安全的（逃逸对象除外），而对堆对象的访问则需要考虑同步问题，或者说线程安全问题：多个线程同时访问该对象，会不会产生与预期结果不一致的结果。这就是通常说的线程同步问题。
+程序员通过Synchronized关键字指示虚拟机需要对指定区域的操作、数据采用同步机制：这些操作是互斥的。虚拟机通过程序代码指定的锁对象，对该对象的类信息的特殊字段设置标志位，指示其他线程等待该标志位的释放，并将等待的线程阻塞。
+虚拟机中一个线程则对应操作系统的一个内核线程，线程的阻塞、唤醒等操作通过操作系统调用来实现，所以改变线程状态的操作通常是比较昂贵的，这也是为什么加了同步控制的多线程程序性能变慢，甚至发生1+1 &lt; 2的情况。
+为此虚拟机做了改进（1.5之后），改进围绕同步的实现手段进行：</p>
+
+<ol>
+<li>减少互斥的命令范围：只在真正需要做同步的命令前后做锁定。所以预期对一个大方法设置synchronize，不如对方法内必须同步的代码块多同步。</li>
+<li>缩小同步对象：某些容器对象内有很多元素，对整个对象加锁的效果和为了读/写一条数据而锁住整个数据表是一个道理。所以在这方面，可以将容器对象分割成不同的子对象，每次加锁只对操作目标所在的数据段加锁。这个方法的典型案例是ConcurrentHashMap</li>
+<li>细化同步场景：类似于数据库的读写，读操作可以不对数据表加锁，写操作才需要。</li>
+<li>多个锁合并成一个锁</li>
+<li>乐观地不加锁，直到操作完成后：即使是写操作，也不应定会产生冲突，所以可以不加锁，而等到操作完成后判断是否跟预期的值一致来决定是否写操作被别的线程覆盖。</li>
+<li>乐观地不枷锁，知道别的线程也来拿锁</li>
+<li>锁了，但不阻塞线程：碰到锁之后不立即阻塞线程，而是执行一些空操作来消磨时间，之后在去判断下是否还能拿到锁。当然虚拟机自带的synchronize关键字没这功能。</li>
+<li>根据上下文判断某些锁并没有意义，直接将锁给去掉。</li>
+</ol>
+
+
+<p>根据这些办法，虚拟机提供了各种工具，作为synchronize关键字的备选（当然在虚拟机内部也采用了上述办法来优化锁，并且用法还是一样的简单）：</p>
+
+<ul>
+<li>Reentranlock</li>
+<li>ReadWriteReentranlock</li>
+<li>Shemaphore：一个锁变成N个锁，锁用完了才需要阻塞线程</li>
+<li>Condition：这个更多的是从功能的角度而不是性能的角度，这可以让锁判断有多个维度，而不是简单的”是/否“</li>
+</ul>
+
+
+<h4>多态</h4>
+
+<p>Java的三大特征之一就是多态，Oracle的官方是这么定义多态的：
+The dictionary definition of polymorphism refers to a principle in biology in which an organism or species can have many different forms or stages. This principle can also be applied to object-oriented programming and languages like the Java language. Subclasses of a class can define their own unique behaviors and yet share some of the same functionality of the parent class
+我认为有两点：</p>
+
+<ol>
+<li>类和它的具体行为（方法）可以有多种形式</li>
+<li>形式的选择留到运行时决定</li>
+</ol>
+
+
+<p>多态的具体表现就是方法的重载和覆盖。那么虚拟机是如何在运行时决定执行哪个方法的呢？
+我们知道方法的信息 和其他类信息一样都存在方法区中，如果一个方法的引用在方法区中只存在一个实例，则并不需要虚拟机做额外的工作，既可以直接将引用直接替换为真正的方法给执行引擎，也就不是“多态”的问题范围了。这样的情况通常包括：</p>
+
+<ul>
+<li>静态方法</li>
+<li>私有方法（有重载，但没有重写。重载虽然也是多态的表现形式，但因为具有不同的方法签名，所以对虚拟机来说，一个方法能直接对应到实例。反而对编译器来说，需要在编译时判断一个方法调用指向的具体是哪个重载方法）</li>
+<li>Final方法（静态方法隐含了final的含义）</li>
+</ul>
+
+
+<p>而对于其他情况类说，方法可以通过类的继承和复写带来“歧义”，编译器也并不能将这个歧义消除，而需要虚拟机来处理，对于这样的情况，虚拟机（具体来说是invokeVirtual指令）按照这样的规则来处理诸如a.method(para)这样的方法调用的：</p>
+
+<ol>
+<li>找到a实例的类型信息，也就是a的实际类型</li>
+<li>从a的实际类型信息中查找有没有与“method(para)”方法签名一致的方法，如果有则表示绑定成功，进行下一步</li>
+<li>否则从a类型的父类开始往上查找，直到找到方法签名一致的方法，并将方法信息给执行引擎进行方法执行。</li>
+</ol>
+
+
+<h4>类加载</h4>
+
+<p>虚拟机启动时通过自带的类加载器（Bootstrap ClassLoader）来加载类文件，对类文件进行验证、链接、初始化之后，将类信息（也是一种数据结构）放到本文前面说的方法区（应该取个更好的名字，不仅仅是方法信息）。
+除此之外，程序员也可通过自定义的类加载器来加载指定的其他类文件。有点需要注意的是不同的类加载器加载的类可以被理解为有不同的平行世界，哪怕是同一个类文件，如果被不同的类加载器加载的话，会在方法区存在两个类文件，因此判断类型是否相同的操作也会返回false。由于任意
+所以，类加载器的设计最好遵循一种协议，以确保java核心类或公共类在应用范围内不需要被重复加载，并可以允许用户定义自己的类加载器，并加载用户指定的类。这种协议可以通过下面的图来表示：</p>
+
+<p><img src="http://images.cnblogs.com/cnblogs_com/yayagepei/classLoader.jpg"></p>
+
+<p>From:<a href="http://images.cnblogs.com/cnblogs_com/yayagepei/classLoader.jpg">http://images.cnblogs.com/cnblogs_com/yayagepei/classLoader.jpg</a></p>
+
+<p>开发者可以通过扩展SystemClassLoader，并复写findClass方法实现自己的类查找和加载逻辑，并遵循这样的规则：</p>
+
+<ul>
+<li>当尝试加载任意一个类，首先尝试通过父类加载器加载，如果记载失败才开始进入自定义的加载。</li>
+<li>当判断一个类是否已经被加载时，首先尝试判断自己是否已经加载过该类，如果不存在，才开始通过父类来判断。</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[如何让nosql数据库支持事务]]></title>
+    <link href="http://gavinhuang.github.io/blog/nosql-transaction/"/>
+    <updated>2014-10-08T18:07:12+08:00</updated>
+    <id>http://gavinhuang.github.io/blog/nosql-transaction</id>
+    <content type="html"><![CDATA[<h3>前言</h3>
+
+<p>关系型数据库如SQL server, Oracle, mysql这类强一致性的数据库天然地支持数据库事务，而大部分NoSQL数据库（如Riak）则由于没有隔离性、锁机制等原因不能实现数据库事务，要实现事务控制则必须从应用层面来处理。本文以Riak为例，介绍基于nosql数据库的应用如何实现数据库事务的方案。</p>
+
+<h3>事务和隔离性</h3>
+
+<p>在开始介绍方案前，先简单回顾下事务的四个特性（ACID）：</p>
+
+<ul>
+<li>atomicity</li>
+<li>consistency</li>
+<li>isolation</li>
+<li>durability</li>
+</ul>
+
+
+<p>其中，隔离性是指多个事务（用户）之前的操作不会相互影响，多个事务并行执行结果应该与各个事务串行执行结果一致。注意，这里说的是执行结果应该与串行执行一致，而不是必须串行地执行，因为串行执行会成为性能提升的瓶颈。不同的隔离性会产生不同的副作用，比如：</p>
+
+<!-- more -->
+
+
+<ul>
+<li>Load Updates</li>
+<li>Dirty Read</li>
+<li>Non-repeatable read</li>
+<li>Phantom read</li>
+</ul>
+
+
+<p>其中，第一项&#8221;更新丢失&#8221;在大部分强一致性数据库系统中不会出现，因为这些系统通常都会采用锁的机制来保证同一数据同时只能被一个事务修改。</p>
+
+<p>围绕着如何在隔离性（以及他说产生的问题）与系统性能之间的平衡产生了一系列的隔离级别：</p>
+
+<ul>
+<li>Read uncommitted</li>
+<li>Read committed</li>
+<li>Repeatable read</li>
+<li>Serializable</li>
+</ul>
+
+
+<blockquote><p>注意，数据库隔离级别的名称跟部分事务副作用有类似，甚至有人直接用隔离级别产生的副作用代替级别名称，留意这些，防止被这些概念搞混。</p></blockquote>
+
+<h3>方案初探</h3>
+
+<p>不少介绍数据库事务的资料都是以银行账户之间转账来说明数据库事务，这里也沿用这个传统：用户A需要先用户B转入一笔金额，在事务内需要进行如下操作：</p>
+
+<ol>
+<li>账户A扣款</li>
+<li>账户B打款</li>
+</ol>
+
+
+<p>由于Riak不支持回滚操作，即不论第二步操作是否成功，第一步操作的结果都将保存在数据库中，所以需要增加一个“表”：事务日志，于是正常的操作转账将变为三步：</p>
+
+<ol>
+<li>账户A扣款</li>
+<li>账户B打款</li>
+<li>假如上述两步都成功则写入事务日志</li>
+</ol>
+
+
+<p>具体来说：
+这是事务开始之前的状态：
+/account/a</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{
+</span><span class='line'>    "name": “Gary",
+</span><span class='line'>    "balance": [
+</span><span class='line'>        {
+</span><span class='line'>            " initial ": 100
+</span><span class='line'>        }
+</span><span class='line'>    ]
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>/account/b</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{
+</span><span class='line'>    "name": “Gavin",
+</span><span class='line'>    "balance": [
+</span><span class='line'>        {
+</span><span class='line'>            " initial ": 0
+</span><span class='line'>        }
+</span><span class='line'>    ]
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这是事务完成之后：
+/account/a</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{
+</span><span class='line'>    "name": “Gary",
+</span><span class='line'>    "balance": [
+</span><span class='line'>        {
+</span><span class='line'>            "initial ": 100
+</span><span class='line'>        },
+</span><span class='line'>        {
+</span><span class='line'>            "txid_20141008_xxx": -10
+</span><span class='line'>        }
+</span><span class='line'>    ]
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>/account/b</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{
+</span><span class='line'>    "name": “Gavin",
+</span><span class='line'>    "balance": [
+</span><span class='line'>        {
+</span><span class='line'>            " initial ": 0
+</span><span class='line'>        },
+</span><span class='line'>        {
+</span><span class='line'>            "txid_20141008_xxx": 10
+</span><span class='line'>        }
+</span><span class='line'>    ]
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>/transactionlog/txid_20141008_xxx</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{
+</span><span class='line'>    "from": “Gary",
+</span><span class='line'>    "to": “Gavin"
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>完成了这些之后，在读取时还需遵循这一的规则：</p>
+
+<ol>
+<li>读取账户余额时需要从balance中的历史记录中倒推计算得出</li>
+<li>balance记录只有在transactionlog表中存在对应的记录方为有效</li>
+<li>在事务范围内，忽略本事务id之后的事务id（即使是那些成功的事务）</li>
+</ol>
+
+
+<p>只有在遵循了上述几个原则之后，才能保证在事务执行时的三步任意一步失败时，标志着整个事务失败了。其中，</p>
+
+<ul>
+<li>1避免了强一致性数据库中锁的应用，又能避免lost updates的问题：所有的操作都有据可查，数据不会在执行更新操作时被覆盖。</li>
+<li>2保证了原子性：一个失败全部失败</li>
+<li>3保证了只有在事务开始之前的事务结果才是有效的，也即达到了read committed的隔离级别</li>
+<li>三个原则一起保证了durability和consistency</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[重新认识volatile]]></title>
+    <link href="http://gavinhuang.github.io/blog/recognize-volatile/"/>
+    <updated>2014-09-26T18:15:40+08:00</updated>
+    <id>http://gavinhuang.github.io/blog/recognize-volatile</id>
+    <content type="html"><![CDATA[<h3>误解</h3>
+
+<p>一直以来，我是这么理解volatile关键字的：该修饰符修饰的变量将不会被缓存（寄存器、处理器二级缓存等），而是直接写入主内存中或从直接主内存中读取。如此，不同的线程间对该变量的读/写到的值都是最新的，也可确保在多线程条件下的正确性，至于什么才叫正确、为什么必须要正确，之前并没有多想。</p>
+
+<p>最近拜读了infoq的mini书：《深入理解Java内存模型》（<a href="http://www.infoq.com/cn/minibooks/java_memory_model">http://www.infoq.com/cn/minibooks/java_memory_model</a> ），让我重新认识了Volatile关键字的真实意义和虚拟机的实现机制。本文以本人对volatile的目的、实现等为线索，对该书中volatile部分叙述重新整理，并结合相关资料，试图对volatile做一个个人总结，希望对读者也有所裨益。</p>
+
+<h3>Volatile的真正作用</h3>
+
+<p>开门见山地说，Volatile修饰的变量可以作为线程间协作的“信号量”，此信号量从一个线程被“传递”到另外一个线程，以达到线程协作的目的。从这个角度上说，volatile与“锁”或Synchronized关键字类似，都能达到线程协作的目的。</p>
+
+<!-- more -->
+
+
+<p>但是，从volatile的基本含义(Java官方文档: <a href="http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.3.1.4">http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.3.1.4</a>) 并不能得出上述结论：</p>
+
+<blockquote><p>The Java programming language allows threads to access shared variables (§17.1). As a rule, to ensure that shared variables are consistently and reliably updated, a thread should ensure that it has exclusive use of such variables by obtaining a lock that, conventionally, enforces mutual exclusion for those shared variables.
+The Java programming language provides a second mechanism, volatile fields, that is more convenient than locking for some purposes.
+A field may be declared volatile, in which case the Java Memory Model ensures that all threads see a consistent value for the variable (§17.4).</p></blockquote>
+
+<p>由上述定义可见，volatile是一个仅仅针对被修饰变量（的值）在不同线程中的一致性、可靠性而采取的效果类似“锁”的一种机制，但并未提及为什么通过对变量可见性的控制，就能达到线程协作的目。为解答这个问题，需要引入一个概念：</p>
+
+<h3>指令重排</h3>
+
+<p>这篇文章: <a href="http://kenwublog.com/illustrate-memory-reordering-in-cpu">http://kenwublog.com/illustrate-memory-reordering-in-cpu</a> 介绍了指令重排的背景。简单来说，编译器、CPU出于性能优化的目的会对程序员的指令（java源代码）的顺序进行适当调整，调整的规则不同的处理器类型有不同的策略，但都一个一条底线：有数据依赖的指令不会被重排。所谓数据依赖性是指：
+两个操作访问同一个变量，并且两个操作之中至少有一个是写操作，则这两个操作具有数据依赖。
+注：常见的x86处理器，不仅在有数据依赖的指令间不能重排，而且禁止了绝大部分指令重排，只允许使用StoreLoad类型的重排，即“写读”操作的重排。</p>
+
+<p>所以Java虚拟机面临的问题是，如何既保证程序按照程序员的意图和顺序被执行(as-if-serial)，又能利用编译器、处理器的重排机制实现代码的优化。Java通过在指令之间插入内存屏障指令（以下省略“指令”，直接称为内存屏障）来达到这一目的。内存屏障是能够被处理器识别的，确保屏障指令前/后的用户指令不被重排的特殊指令。读和写的两种操作排列组合形成如下可能：</p>
+
+<ul>
+<li>LoadLoad：  确保该指令之前的 “读取” 指令，在该指令之后的 “读取” 指令之前执行，从内存角度来说：“之前的指令” 首先从主内存装载变量之后，”之后的指令“ 才能装载</li>
+<li>LoadStore： 确保该指令之前的 “读取” 指令，在该指令之后的 “写入” 指令之前执行，从内存角度来说：“之前的指令” 首先从主内存装载变量之后，”之后的指令“ 才能被写入主内存。</li>
+<li>StoreStore：确保该指令之前的 “写入“ 指令，在该指令之后的 “写入” 指令之前执行，从内存角度来说：“之前的指令” 首先写入主内存（对其他线程可见）之后，“之后的指令”才能写入到主内存中。</li>
+<li>StoreLoad： 确保该指令之前的 “写入” 指令， 在该指令之后的 “读取” 指令之前执行，从内存角度来说： “之前的指令” 写入主内存，对其他线程可见（也可理解为尽到了通知的义务）之后，“之后的指令” 才能执行。</li>
+</ul>
+
+
+<h4>Volatile的重排规则</h4>
+
+<p>至此，我们可以回头看看Volatile的基本特性:</p>
+
+<ul>
+<li>当写一个Volatile变量时，要求该线程把变量对应的值刷新到主内存中。</li>
+<li>当读一个Volatile变量时，线程要将该变量在本地内存中的值置为无效，而从主内存中读取。</li>
+</ul>
+
+
+<p>为实现上述特性，Java内存模型（具体来说是JSR133）给Volatile定义了如下重排规则：</p>
+
+<ol>
+<li>当第一个操作是Volatile读时，不能与其后的任何操作进行重排</li>
+<li>当第二个操作是Volatile写时，不能与之前的任何操作进行重排（此处有些疑问，应该只需不与写操作重排即可）</li>
+<li>当 第一个操作是Volatile写，第二个操作是Volatile读时，不能进行重排。</li>
+</ol>
+
+
+<p>通过以上的规则，结合如下代码：
+Thread-write:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">volatile</span> <span class="kt">boolean</span> <span class="n">readyFlag</span><span class="o">;</span>
+</span><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">value</span><span class="o">=</span><span class="mi">100</span><span class="o">;</span><span class="c1">//该变量可以被看成是消息体</span>
+</span><span class='line'><span class="n">readyFlag</span><span class="o">=</span><span class="kc">true</span><span class="c1">//表示消息已经就绪或发送完毕</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Thread-read:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="k">if</span> <span class="o">(</span><span class="n">readyFlag</span><span class="o">){</span><span class="c1">//消息已就绪</span>
+</span><span class='line'>  <span class="n">myValue</span><span class="o">=</span><span class="n">value</span><span class="c1">//读取最新的值，即接收消息</span>
+</span><span class='line'>  <span class="o">...</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>不难得出，volatile除了保证自身的值是volatile的之外，还可控制其他变量的行为，实现线程协作。</p>
+
+<h3>延伸：重排规则的实现</h3>
+
+<p>由于Java内存模型通过插入内存屏障到达控制处理器的重排规则的目的，为了达成如上的规则，需要在二进制指令中的合适位置插入合适的屏障指令，下表列出了Volatile 的3个重排规则需要实现的屏障：</p>
+
+<ol>
+<li>第一个操作是Volatile读时：在该指令之后插入：
+
+<ol type="a">
+<li>LoadLoad指令（控制之后的读操作不重排）；</li>
+<li>插入LoadStore指令（控制之后的写操作不重排）</li>
+</ol>
+</li>
+<li>第二个操作是Volatile写时：在该指令之前插入一个StoreStore指令（控制之前的写操作不重排）</li>
+<li>第一个操作是Volatile写   ：在该指令之后插入StoreLoad指令，以控制之后的Volatile读操作不被重排</li>
+</ol>
+
+
+<p>补充条件： 由于很难判断Volatile读/写操作是否为线程执行的最后/第一个指令，所以：</p>
+
+<ul>
+<li>在Volatile写之后插入StoreLoad指令</li>
+<li>在Volatile读之前插入StoreLoad指令</li>
+</ul>
+
+
+<p>如此一来，涉及Volatile的指令前后将布满了内存模型要求的内存屏障变量，这样的结果虽然可以确保程序的正确性(as-if-serial)，但却影响了性能，所以Java内存模型规定还可以在此基础上进行优化，比如将两个内存屏障（其中一个为上一个指令之后的屏障，另一个为下一个指令之前的屏障）进行合并、省略。</p>
+
+<blockquote><p>Written with <a href="https://stackedit.io/">StackEdit</a>.</p></blockquote>
+]]></content>
+  </entry>
+  
+</feed>
