@@ -1,0 +1,318 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Angular for Backend Developer - Gavin on Backend Technology</title>
+  <meta name="author" content="Gavin Huang">
+
+  
+  <meta name="description" content="内容概要 意义
+核心概念
+实例 意义 Angular作为前端的MVC框架，直接利用了服务器端开发的概念，即表现层和逻辑层分离，数据和逻辑通过控制器分发，并且通过request, session, global 等来传递数据和模型(model)。
+angular也提供了控制器、业务服务功能， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://gavinhuang.github.io/blog/angular-for-backend-developer">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Gavin on Backend Technology" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Gavin on Backend Technology</a></h1>
+  
+    <h2>backend and more</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:gavinhuang.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Angular for Backend Developer</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-11-29T10:24:48+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>10:24 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>内容概要</h2>
+
+<ul>
+<li>意义</li>
+<li>核心概念</li>
+<li>实例</li>
+</ul>
+
+
+<h2>意义</h2>
+
+<p>Angular作为前端的MVC框架，直接利用了服务器端开发的概念，即表现层和逻辑层分离，数据和逻辑通过控制器分发，并且通过request, session, global 等来传递数据和模型(model)。
+angular也提供了控制器、业务服务功能，并且通过相关的指令（Directive）实现类似JSP内嵌Java代码的功能。而数据在视图和控制器之间的传递则通过scope完成。
+最关键的是，由于数据和视图都在浏览器中，给数据和视图的实时双向绑定提供了基础，所以angular的变量改变可以直接体现到视图中，反之亦然。</p>
+
+<h2>核心概念</h2>
+
+<!-- more -->
+
+
+<p><strong>依赖注入</strong></p>
+
+<p>跟Spring的依赖注入类似，Angular也可以实现依赖注入，而且更简单，只要页面中引入了所有的js文件(如：controllerA.js, serviceB.js)，Angular会根据名字（同spring 里的依据名称注入），直接注入同名的参数。比如：</p>
+
+<pre><code>app.controller("controllerA", function($scope, serviceB){
+   //your code here
+});
+</code></pre>
+
+<p>angular 会自动注入serviceB的实例。</p>
+
+<p><strong>控制器 (Controller)</strong>
+控制器是实现视图和逻辑分离的关键一环。Angular通过</p>
+
+<p><code>
+angular.module(xxx).controller(xxx)
+</code></p>
+
+<p>来定义控制器。</p>
+
+<p><strong>模块 (Module)</strong>
+Angular实现代码隔离的基本单位，所有的功能（包括控制器、service等）都必须在一个模块内定义。一个模块可以以来其他的模块，例如：
+~~~~
+var app = angular.module(&ldquo;moduleName&rdquo;,[&ldquo;depency1&rdquo;, &ldquo;module2&rdquo;]).
+~~~~
+通常一个SPA (Single Page Application)只用一个module就足够了。</p>
+
+<p><strong>服务 (Service)</strong>
+对应到服务器端的Service层，主要是对逻辑的一种封装。Angular中通过
+~~~~
+angular.module(&ldquo;moduleName&rdquo;).factory(&ldquo;ServiceName&rdquo;, function(paramters){});
+~~~~
+来定义。</p>
+
+<p><strong>指令(Directive)</strong>
+指令类似语法糖，可以在HTML（或者叫Angular模板）中定义数据展示的行为。指令通常用在HTML元素上（这也是比JSP好的地方，页面其实并不完全以来angular，如果把Angular移走，）。常见的有：</p>
+
+<ul>
+<li>ng-model: 绑定一个元素到一个变量，元素的值的改变会导致变量的改变，反之亦然。</li>
+<li>ng-repeat: 最常见的一个指令。通常页面最常用的用例就是，循环一个集合，把集合里的数据展示成一个列表，如果有必要可以进行分页。</li>
+<li>ng-if: 顾名思义，就是在if内指定的表达式为true时才将一个元素渲染到界面上。</li>
+<li>ng-show：类似ng-if，区别在与，本指令会在表达式为真时显示，为假时隐藏，而不是完全不存在元素。</li>
+<li>ng-click：指定一个元素的点击事件，目标通常是controller里定义的function。</li>
+<li>&hellip;</li>
+</ul>
+
+
+<p><strong>插件</strong>
+Angular可以和其他插件集成，比如最常见的一个是ui-router。虽然Angular自带有router相关的指令，但是de facto的router还是用ui-router。
+插件表现的形式有许多种，比如直接提供接口，也可以以自定义指令的形式出现。</p>
+
+<p>过滤器 (Filter)
+Angular中的过滤器跟服务器端的过滤器不是一个概念，我认为更准确的叫法应该叫管道过滤器，因为过滤器其实是对数据（尤其是表达式中的值），进入到pipe中，然后进行处理后输出。比如如下的例子将一个长整型的时间戳输出成易读的形式：
+~~~~</p>
+
+<pre><code>
+**包管理器**
+Angular并不依赖特定的JS包管理器，我目前用bower, 常用的命令有:
+</code></pre>
+
+<p>bower install package-name &ndash;save
+bower uninstall package-name &ndash;save
+~~~~
+ 等。</p>
+
+<p>也可以用npm，命令也和bower区别不大。</p>
+
+<h2>一点感触</h2>
+
+<p>之前一直没有尝试一个前端项目的主要是有个错误的判断：以为angular等项目依赖npm/bower打包工具，打包成一个特殊入口的app。而我一直不知道怎么样打包，也没见到有任何文章提到过，所以一直感觉无从下手。直到看到了一个项目的源代码后才发现，原来根本不需要特殊的入口，跟普通的web page和js的关系并没有本质的区别，也是一个index.html 引用一个js(通常是app.js)，由这个js定义angular模块、控制器。在使用时，只要确保页面中有引入app.js, controller.js等angular就可以自动完成装配。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Gavin Huang</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2016-11-29T10:24:48+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>10:24 am</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://gavinhuang.github.io/blog/angular-for-backend-developer/" data-via="" data-counturl="http://gavinhuang.github.io/blog/angular-for-backend-developer/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/architecture-pattern/" title="Previous Post: 五种常见的架构模式">&laquo; 五种常见的架构模式</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/angular-for-backend-developer/">Angular for Backend Developer</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/architecture-pattern/">五种常见的架构模式</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/permission-pattern-in-restful-paas/">Restful API的权限设计思考</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/jvm/">我理解的JVM</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/nosql-transaction/">如何让nosql数据库支持事务</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/gavinHuang">@gavinHuang</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'gavinHuang',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Gavin Huang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
