@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://gavinhuang.github.io/blog/set-up-big-data-cluster/</loc>
+<lastmod>2017-01-12T10:24:44+08:00</lastmod>
+</url>
+<url>
 <loc>http://gavinhuang.github.io/blog/angular-for-backend-developer/</loc>
 <lastmod>2016-11-29T10:24:48+08:00</lastmod>
 </url>

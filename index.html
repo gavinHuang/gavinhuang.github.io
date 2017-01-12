@@ -9,10 +9,12 @@
   <meta name="author" content="Gavin Huang">
 
   
-  <meta name="description" content="内容概要 意义
-核心概念
-实例 意义 Angular作为前端的MVC框架，直接利用了服务器端开发的概念，即表现层和逻辑层分离，数据和逻辑通过控制器分发，并且通过request, session, global 等来传递数据和模型(model)。
-angular也提供了控制器、业务服务功能， &hellip;">
+  <meta name="description" content="前言 从2015年开始搭建数据分析系统以来，已经过了一年多时间，有必要对之前搭建的经历做一个总结。
+本问主要包含以下几个系统/框架 Hadoop (HDFS/YARN)
+Hive
+HBase
+ZooKeeper
+Spark 其中hadoop的HDFS做为Hive和Hbase的存储基础设施， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +70,58 @@ angular也提供了控制器、业务服务功能， &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/set-up-big-data-cluster/">搭建大数据全栈集群</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-01-12T10:24:44+08:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>12</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>10:24 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>前言</h3>
+
+<p>从2015年开始搭建数据分析系统以来，已经过了一年多时间，有必要对之前搭建的经历做一个总结。
+本问主要包含以下几个系统/框架</p>
+
+<ul>
+<li>Hadoop (HDFS/YARN)</li>
+<li>Hive</li>
+<li>HBase</li>
+<li>ZooKeeper</li>
+<li>Spark</li>
+</ul>
+
+
+<p>其中hadoop的HDFS做为Hive和Hbase的存储基础设施，也保存历史日志数据。
+YARN则做为spark的任务执行调度，
+引入Hbase则是为了补充Hive不方便做部分内容更新的问题。
+ZooKeeper做为Hbase的支撑，也为未来其他以来zk的系统做支撑。
+Spark的作用有很多，目前搭建的目的主要是做为数据解析处理的工具。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/set-up-big-data-cluster/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -369,6 +423,10 @@ angular也提供了控制器、业务服务功能，并且通过相关的指令�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/set-up-big-data-cluster/">搭建大数据全栈集群</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/angular-for-backend-developer/">Angular for Backend Developer</a>
       </li>
     
@@ -382,10 +440,6 @@ angular也提供了控制器、业务服务功能，并且通过相关的指令�
     
       <li class="post">
         <a href="/blog/jvm/">我理解的JVM</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/nosql-transaction/">如何让nosql数据库支持事务</a>
       </li>
     
   </ul>
@@ -430,7 +484,7 @@ angular也提供了控制器、业务服务功能，并且通过相关的指令�
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2016 - Gavin Huang -
+  Copyright &copy; 2017 - Gavin Huang -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
