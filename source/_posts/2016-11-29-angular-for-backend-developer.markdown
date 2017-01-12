@@ -33,29 +33,37 @@ app.controller("controllerA", function($scope, serviceB){
 angular 会自动注入serviceB的实例。
 
 **控制器 (Controller)**
+
 控制器是实现视图和逻辑分离的关键一环。Angular通过
 
-`
+~~~~
 angular.module(xxx).controller(xxx)
-`
+~~~~
 
 来定义控制器。
 
 **模块 (Module)**
+
 Angular实现代码隔离的基本单位，所有的功能（包括控制器、service等）都必须在一个模块内定义。一个模块可以以来其他的模块，例如：
+
 ~~~~
 var app = angular.module("moduleName",["depency1", "module2"]).
 ~~~~
+
 通常一个SPA (Single Page Application)只用一个module就足够了。
 
 **服务 (Service)**
+
 对应到服务器端的Service层，主要是对逻辑的一种封装。Angular中通过
+
 ~~~~
 angular.module("moduleName").factory("ServiceName", function(paramters){});
 ~~~~
+
 来定义。
 
 **指令(Directive)**
+
 指令类似语法糖，可以在HTML（或者叫Angular模板）中定义数据展示的行为。指令通常用在HTML元素上（这也是比JSP好的地方，页面其实并不完全以来angular，如果把Angular移走，）。常见的有：
 
 - ng-model: 绑定一个元素到一个变量，元素的值的改变会导致变量的改变，反之亦然。
@@ -66,21 +74,27 @@ angular.module("moduleName").factory("ServiceName", function(paramters){});
 - ...
 
 **插件**
+
 Angular可以和其他插件集成，比如最常见的一个是ui-router。虽然Angular自带有router相关的指令，但是de facto的router还是用ui-router。
 插件表现的形式有许多种，比如直接提供接口，也可以以自定义指令的形式出现。
 
-过滤器 (Filter)
+**过滤器 (Filter)**
+
 Angular中的过滤器跟服务器端的过滤器不是一个概念，我认为更准确的叫法应该叫管道过滤器，因为过滤器其实是对数据（尤其是表达式中的值），进入到pipe中，然后进行处理后输出。比如如下的例子将一个长整型的时间戳输出成易读的形式：
+
 ~~~~
-{{ time | date: "yyyy-MM-DD hh:mm:ss z"}}
+\{\{  time | date: "yyyy-MM-DD hh:mm:ss z" \}\}
 ~~~~
 
 **包管理器**
+
 Angular并不依赖特定的JS包管理器，我目前用bower, 常用的命令有:
+
 ~~~~
 bower install package-name --save
 bower uninstall package-name --save
 ~~~~
+
  等。
 
 也可以用npm，命令也和bower区别不大。
