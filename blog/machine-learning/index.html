@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>机器学习简介 - Gavin on Backend Technology</title>
+  <meta name="author" content="Gavin Huang">
+
+  
+  <meta name="description" content="前言 机器学习作为AI的一个核心领域，重要性不言而喻。本文尝试从本人了解机器学习的过程来解释什么是机器学习。 缘起 由于手上有个IoT项目的数据需要分析，所以去年花了些精力研究数据分析领域的知识和方法。其中一个任务是给用户进行分类（确切地说应该是聚类）， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://gavinhuang.github.io/blog/machine-learning">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Gavin on Backend Technology" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Gavin on Backend Technology</a></h1>
+  
+    <h2>backend and more</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:gavinhuang.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">机器学习简介</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-01-18T12:41:33+08:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>18</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>12:41 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h3>前言</h3>
+
+<p>机器学习作为AI的一个核心领域，重要性不言而喻。本文尝试从本人了解机器学习的过程来解释什么是机器学习。</p>
+
+<h3>缘起</h3>
+
+<p>由于手上有个IoT项目的数据需要分析，所以去年花了些精力研究数据分析领域的知识和方法。其中一个任务是给用户进行分类（确切地说应该是聚类），进而了解到了spark中的clustering算法，而这类算法通常被归类为机器学习的无监督学习。这样就接触到了机器学习。</p>
+
+<!-- more -->
+
+
+<p>你可能是从另外的角度接触到的机器学习，比如预测价格走势（这是个刚需，谁都想预测未来。），或者是从IT新闻上看到的深度学习（我认为深度学习是机器学习中的神经网络的子领域）。这些并不重要，作为一个程序员，看机器学习的角度总有一些共性，我想尝试用一个程序员的角度来介绍机器学习，希望能对还未入门的程序员提供一些帮助。</p>
+
+<h3>什么是机器学习</h3>
+
+<p>机器学习这个名词来自人工智能，原意是想让机器能拥有人类的智力水平，然后像人类的儿童一样学习新知识和技能。当然这样的想法并不成功，就好像人类想飞翔，却首先要变得像鸟一样，机器不能拥有人类的智慧。目前的机器学习的大部分任务都可以细化为统计学的计算。
+所以，要给机器学习下个定义的话，可以这么说：</p>
+
+<blockquote><p>　如果一个模型在输入一定量的数据（对应人类的经验）后的计算结果，相对没有这些数据时有提升，则可以说这个算法从这些数据中<strong>学习</strong>到了。</p></blockquote>
+
+<p>做一个比喻，考虑预测房屋价格这个问题。如果没有经验（数据），任意输出一个价格命中的概率是很小的。如果有历史数据（以史为鉴）做为支持，输出一个价格则更可信。
+问题是如何从这些历史数据中学习呢？
+一个方案是把问题转换为数学函数，以函数的输出（Y值）做为预测的价格，历史数据中的各个因素做为自变量。当这个函数（包括自变量和参数）确定了，则预测价格变成了将已知的变量带入函数，求出函数值的过程。
+所以机器学习的过程可以再划分为两个部分：</p>
+
+<ul>
+<li>确定函数</li>
+<li>计算参数值</li>
+</ul>
+
+
+<p>第一步叫建模，地二步叫优化。</p>
+
+<h4>函数</h4>
+
+<p>确定函数形式叫建模，通常包含几个任务，首先要确认有哪些变量，比如上述的预测房价的问题，自变量可以有房龄、面积、位置等。其次要确认变量之间的叠加关系。比如上述三个变量都是对房价有正面作用的（把问题简化，可以认为他们都是一次方）。总结起来可以提出一个学习方案（也就是模型）为:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Y = aX1 + b X2 + cX3 + d</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中x1,x2,x3为上述的三个变量。</p>
+
+<h4>参数</h4>
+
+<p>确认了函数形式之后，剩下的４个参数，a,b,c,d还需要确定，这里是历史数据发挥作用的地方。由于历史数据具备一个特定：　自变量已知，输出结果已知，未知的是参数，所以问题变成了求参数的过程。
+当然，一般不会有参数可以使历史数据中的变量带入函数，使得结果和历史实际值完全对应。所以通常要的参数是这样的参数：</p>
+
+<blockquote><p>使历史数据加上这些参数后得到的值　与　实际值　之间的差距最小。</p></blockquote>
+
+<p>也就是说，“遍历”所有的参数可能组合，选择差距最小的组合。
+这个差距也被成为Cost Function.　由于通常意义的差距是 A-B，但是在机器学习里，通常是(a-b)<sup>2</sup>，所以也叫square error.</p>
+
+<h3>机器学习用在什么地方</h3>
+
+<p>可以说机器学习（和人工智能一起）将带来自信息革命之后最大的变革，他的应用领域将覆盖社会的各个方面。
+目前可以明确的有：</p>
+
+<ul>
+<li>材料审核类（机器判断材料的真伪、等级评分）</li>
+<li>视听识别类（图像、声音识别，将带来人机交互的革命）</li>
+<li>自动规划（自动驾驶、自动导航等）</li>
+<li>其他</li>
+</ul>
+
+
+<h3>机器学习有哪些常见算法</h3>
+
+<p>机器学习是一个比较宽泛的概念，含义也在不断变化。一种划分方法是根据是否需要历史数据划分为：</p>
+
+<ul>
+<li>supervised learning</li>
+<li>unsupervised learning</li>
+</ul>
+
+
+<p>上文提到的预测房价的问题就属于supervised learning (监督学习)，　而常见的无监督学习比如聚类，即根据一定的算法，自动将数据集自动划分为几种类别。常见的算法是k-mean：根据数据集在多维空间之间的距离确定类别，通常会将在多维空间中比较靠近的点划分为同类。</p>
+
+<h3>深入机器学习</h3>
+
+<p>说到这里，似乎机器学习内容并不多，用途也不多，这其实是因为还有一个最热门也最有用的部分还没介绍，就是基于神经网络的机器学习。
+神经网络算法可以视为大脑的仿生学，即大脑神经元可以通过接受一个信号刺激，并输出一个放大或缩小后的信号，而许多个信号相互关联之后，在多轮的传递后形成一个最终的信号量。
+神经网络的一个巨大优势是可以自动识别变量，而不需要其他模型中，需要手动确定有哪些变量。更深入的分内容最好有专门的文章并结合实际例子说明比较合适。
+希望介绍到这里能帮助你破除机器学习的神秘感。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Gavin Huang</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2017-01-18T12:41:33+08:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>18</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>12:41 pm</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://gavinhuang.github.io/blog/machine-learning/" data-via="" data-counturl="http://gavinhuang.github.io/blog/machine-learning/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/set-up-big-data-cluster/" title="Previous Post: 搭建大数据全栈集群">&laquo; 搭建大数据全栈集群</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/machine-learning/">机器学习简介</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/set-up-big-data-cluster/">搭建大数据全栈集群</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/angular-for-backend-developer/">Angular for Backend Developer</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/architecture-pattern/">五种常见的架构模式</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/permission-pattern-in-restful-paas/">Restful API的权限设计思考</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/gavinHuang">@gavinHuang</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'gavinHuang',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2017 - Gavin Huang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
