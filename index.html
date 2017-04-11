@@ -9,7 +9,10 @@
   <meta name="author" content="Gavin Huang">
 
   
-  <meta name="description" content="前言 机器学习作为AI的一个核心领域，重要性不言而喻。本文尝试从本人了解机器学习的过程来解释什么是机器学习。 缘起 由于手上有个IoT项目的数据需要分析，所以去年花了些精力研究数据分析领域的知识和方法。其中一个任务是给用户进行分类（确切地说应该是聚类）， &hellip;">
+  <meta name="description" content="如果要问我使用Hive的最大的感受，那第一个出现的答案一定是：慢。
+不仅我这么说，Hive自己觉得挺过意不去的，所以他会建议你更换一个引擎： 1
+2
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +80,49 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/hive-on-spark/">Hive on Spark</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-04-11T13:28:07+08:00'><span class='date'><span class='date-month'>Apr</span> <span class='date-day'>11</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>1:28 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>如果要问我使用Hive的最大的感受，那第一个出现的答案一定是：慢。
+不仅我这么说，Hive自己觉得挺过意不去的，所以他会建议你更换一个引擎：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. 
+</span><span class='line'>Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>本文只有一个目的：告诉你Hive切换成Spark引擎很简单，远远比官方文档描述得简单。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/hive-on-spark/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -470,6 +516,10 @@ angular也提供了控制器、业务服务功能，并且通过相关的指令�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/hive-on-spark/">Hive on Spark</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/machine-learning/">机器学习简介</a>
       </li>
     
@@ -483,10 +533,6 @@ angular也提供了控制器、业务服务功能，并且通过相关的指令�
     
       <li class="post">
         <a href="/blog/architecture-pattern/">五种常见的架构模式</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/permission-pattern-in-restful-paas/">Restful API的权限设计思考</a>
       </li>
     
   </ul>
