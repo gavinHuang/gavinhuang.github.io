@@ -29,6 +29,7 @@ https://cwiki.apache.org/confluence/display/Hive/Hive+on+Spark%3A+Getting+Starte
 但是我个人觉得这不是一个很好的官方教程，很少有逻辑关系的演进，只有一个个的信息点，而且把必须的步骤和调优的步骤混为一谈，让初学者看得云里雾里。所以我觉得很有必要整理一个简洁的说明，不一定能解决所有问题，但是能对有切换Hive引擎的朋友传达一个清晰的步骤。
 
 ##步骤:只有一步
+
 是的，你没看错，Hive on Spark就是这么简单，只要一步就完成了：
 ```
 set hive.execution.engine=spark;
@@ -113,5 +114,15 @@ select count(*) from table_1;
 
 另外，在有关联操作、Group操作、Union操作时，Spark引擎能立刻提升执行速度。速度会比MR引擎快接近10倍左右，当然具体提升幅度也依赖其他因素。
 
+##跟其他系统的集成
+一种比较常见的用法是利用hive跟Hbase/Elasticsearch等系统集成，这样可以通过HQL访问其他系统的数据。
+这里以跟Hbase集成为例，需要在HiverServer和Hive Cli的机器中的hive-site.xml中配置
+```
+<property>
+    <name>hive.aux.jars.path</name>
+    <value>file:///path/to/hbase-jars, separated by comma.these file can be found at HBASE_HOME/lib/hbase*</value>
+    <description>The location of the plugin jars that contain implementations of user defined functions and serdes.</description>
+  </property>
+```
 
 
