@@ -230,6 +230,25 @@ WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in &hellip;
 <p>在第一次查询时，使用Spark引擎和使用MR引擎并没有太多的速度差别。但是spark的好处在于，第二次查询的时候，MR引擎话费的时间跟第一次一样，而Spark引擎的查询速度则有数量级的优化。</p>
 
 <p>另外，在有关联操作、Group操作、Union操作时，Spark引擎能立刻提升执行速度。速度会比MR引擎快接近10倍左右，当然具体提升幅度也依赖其他因素。</p>
+
+<h2>跟其他系统的集成</h2>
+
+<p>一种比较常见的用法是利用hive跟Hbase/Elasticsearch等系统集成，这样可以通过HQL访问其他系统的数据。
+这里以跟Hbase集成为例，需要在HiverServer和Hive Cli的机器中的hive-site.xml中配置</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;property&gt;
+</span><span class='line'>    &lt;name&gt;hive.aux.jars.path&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;file:///path/to/hbase-jars, separated by comma.these file can be found at HBASE_HOME/lib/hbase*&lt;/value&gt;
+</span><span class='line'>    &lt;description&gt;The location of the plugin jars that contain implementations of user defined functions and serdes.&lt;/description&gt;
+</span><span class='line'>  &lt;/property&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+
 </div>
 
 
