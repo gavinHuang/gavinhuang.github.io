@@ -4,7 +4,7 @@
   <title><![CDATA[Gavin on Backend Technology]]></title>
   <link href="http://gavinhuang.github.io/atom.xml" rel="self"/>
   <link href="http://gavinhuang.github.io/"/>
-  <updated>2017-11-27T16:24:18+08:00</updated>
+  <updated>2017-11-27T16:26:21+08:00</updated>
   <id>http://gavinhuang.github.io/</id>
   <author>
     <name><![CDATA[Gavin Huang]]></name>
@@ -264,14 +264,6 @@ Nearest to eight: six, five, two, one, nine, seven, three, four</p>
 
 <p>这样就算是完整的结果了。回顾一下：本教程介绍了Word2Vec和负取样是如何工作的，如何用Keras的functional 接口实现，而在接下来的教程里，我会就介绍如何在Keras和Tensorflow中载入训练好的嵌入权重。</p>
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Keras-based_word2vec-tutorial]]></title>
-    <link href="http://gavinhuang.github.io/blog/keras-based-word2vec-tutorial.markdown/"/>
-    <updated>2017-11-27T16:09:03+08:00</updated>
-    <id>http://gavinhuang.github.io/blog/keras-based-word2vec-tutorial.markdown</id>
-    <content type="html"><![CDATA[]]></content>
   </entry>
   
   <entry>
