@@ -9,10 +9,7 @@
   <meta name="author" content="Gavin Huang">
 
   
-  <meta name="description" content="如果要问我使用Hive的最大的感受，那第一个出现的答案一定是：慢。
-不仅我这么说，Hive自己觉得挺过意不去的，所以他会建议你更换一个引擎： 1
-2
-WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in &hellip;">
+  <meta name="description" content="原文：http://adventuresinmachinelearning.com/word2vec-keras-tutorial/ Word2Vec负取样架构图 理解Word2Vec的词嵌入对学习机器学习来说至关重要。 词嵌入也是自然语言处理的关键一步。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -80,6 +77,74 @@ WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in &hellip;
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/keras-based-word2vec-tutorial/">基于Keras的Word2Vec教程</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-11-27T16:13:00+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>27</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>4:13 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><blockquote><p>原文：<a href="http://adventuresinmachinelearning.com/word2vec-keras-tutorial/">http://adventuresinmachinelearning.com/word2vec-keras-tutorial/</a></p></blockquote>
+
+<p><img src="/images/imgs/20171127-155408.png" alt="" /></p>
+
+<p>Word2Vec负取样架构图</p>
+
+<p>理解Word2Vec的词嵌入对学习机器学习来说至关重要。 词嵌入也是自然语言处理的关键一步。 本教程展示如何利用深度学习框架Keras来实现Word2Vec。关于Keras的介绍，请参考我的<a href="http://adventuresinmachinelearning.com/keras-tutorial-cnn-11-lines/">另外一篇文章</a>。在我的<a href="http://adventuresinmachinelearning.com/word2vec-tutorial-tensorflow/">前一篇文章里</a>，我介绍了基于TensorFlow的Word2Vec实现，并且说明了一个简单的、基于softmax的机制在大词量，训练嵌入层相当慢的情况的情况，通过引入了"negative sampling"的机制，并且在tensorflow中定制了loss function，即nce_loss来解决问题。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/keras-based-word2vec-tutorial/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/keras-based-word2vec-tutorial.markdown/">Keras-based_word2vec-tutorial</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-11-27T16:09:03+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>27</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>4:09 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"></div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -461,49 +526,9 @@ angular也提供了控制器、业务服务功能，并且通过相关的指令�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/recognize-volatile/">重新认识volatile</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2014-09-26T18:15:40+08:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>6:15 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3>误解</h3>
-
-<p>一直以来，我是这么理解volatile关键字的：该修饰符修饰的变量将不会被缓存（寄存器、处理器二级缓存等），而是直接写入主内存中或从直接主内存中读取。如此，不同的线程间对该变量的读/写到的值都是最新的，也可确保在多线程条件下的正确性，至于什么才叫正确、为什么必须要正确，之前并没有多想。</p>
-
-<p>最近拜读了infoq的mini书：《深入理解Java内存模型》（<a href="http://www.infoq.com/cn/minibooks/java_memory_model">http://www.infoq.com/cn/minibooks/java_memory_model</a> ），让我重新认识了Volatile关键字的真实意义和虚拟机的实现机制。本文以本人对volatile的目的、实现等为线索，对该书中volatile部分叙述重新整理，并结合相关资料，试图对volatile做一个个人总结，希望对读者也有所裨益。</p>
-
-<h3>Volatile的真正作用</h3>
-
-<p>开门见山地说，Volatile修饰的变量可以作为线程间协作的“信号量”，此信号量从一个线程被“传递”到另外一个线程，以达到线程协作的目的。从这个角度上说，volatile与“锁”或Synchronized关键字类似，都能达到线程协作的目的。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/recognize-volatile/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/posts/2">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -516,6 +541,14 @@ angular也提供了控制器、业务服务功能，并且通过相关的指令�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/keras-based-word2vec-tutorial/">基于Keras的Word2Vec教程</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/keras-based-word2vec-tutorial.markdown/">Keras-based_word2vec-tutorial</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/hive-on-spark/">Hive on Spark</a>
       </li>
     
@@ -525,14 +558,6 @@ angular也提供了控制器、业务服务功能，并且通过相关的指令�
     
       <li class="post">
         <a href="/blog/set-up-big-data-cluster/">搭建大数据全栈集群</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/angular-for-backend-developer/">Angular for Backend Developer</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/architecture-pattern/">五种常见的架构模式</a>
       </li>
     
   </ul>
