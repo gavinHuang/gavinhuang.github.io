@@ -155,30 +155,12 @@ A field may be declared volatile, in which case the Java Memory Model ensures th
 <p>通过以上的规则，结合如下代码：
 Thread-write:</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">volatile</span> <span class="kt">boolean</span> <span class="n">readyFlag</span><span class="o">;</span>
-</span><span class='line'><span class="o">...</span>
-</span><span class='line'><span class="kt">int</span> <span class="n">value</span><span class="o">=</span><span class="mi">100</span><span class="o">;</span><span class="c1">//该变量可以被看成是消息体</span>
-</span><span class='line'><span class="n">readyFlag</span><span class="o">=</span><span class="kc">true</span><span class="c1">//表示消息已经就绪或发送完毕</span>
-</span></code></pre></td></tr></table></div></figure>
+<figure class='code'><figcaption><span></span></figcaption></figure>
 
 
 <p>Thread-read:</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">...</span>
-</span><span class='line'><span class="k">if</span> <span class="o">(</span><span class="n">readyFlag</span><span class="o">){</span><span class="c1">//消息已就绪</span>
-</span><span class='line'>  <span class="n">myValue</span><span class="o">=</span><span class="n">value</span><span class="c1">//读取最新的值，即接收消息</span>
-</span><span class='line'>  <span class="o">...</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<figure class='code'><figcaption><span></span></figcaption></figure>
 
 
 <p>不难得出，volatile除了保证自身的值是volatile的之外，还可控制其他变量的行为，实现线程协作。</p>
@@ -271,6 +253,10 @@ Thread-write:</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/the-tale-of-two-pipeline/">The Tale of Two Pipelines</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/keras-based-word2vec-tutorial/">基于Keras的Word2Vec教程</a>
       </li>
     
@@ -284,10 +270,6 @@ Thread-write:</p>
     
       <li class="post">
         <a href="/blog/set-up-big-data-cluster/">搭建大数据全栈集群</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/angular-for-backend-developer/">Angular for Backend Developer</a>
       </li>
     
   </ul>
@@ -333,7 +315,7 @@ Thread-write:</p>
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2017 - Gavin Huang -
+  Copyright &copy; 2021 - Gavin Huang -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://gavinhuang.github.io/blog/the-tale-of-two-pipeline/</loc>
+<lastmod>2021-11-05T19:11:26+11:00</lastmod>
+</url>
+<url>
 <loc>http://gavinhuang.github.io/blog/keras-based-word2vec-tutorial/</loc>
 <lastmod>2017-11-27T16:13:00+08:00</lastmod>
 </url>
@@ -41,10 +45,10 @@
 <lastmod>2014-09-26T18:15:40+08:00</lastmod>
 </url>
 <url>
-<loc>http://gavinhuang.github.io/</loc>
+<loc>http://gavinhuang.github.io/blog/archives/</loc>
 </url>
 <url>
-<loc>http://gavinhuang.github.io/blog/archives/</loc>
+<loc>http://gavinhuang.github.io/</loc>
 </url>
 <url>
 <loc>http://gavinhuang.github.io/blog/categories/java/</loc>
@@ -54,5 +58,8 @@
 </url>
 <url>
 <loc>http://gavinhuang.github.io/blog/categories/machinelearning/</loc>
+</url>
+<url>
+<loc>http://gavinhuang.github.io/blog/categories/data/</loc>
 </url>
 </urlset>

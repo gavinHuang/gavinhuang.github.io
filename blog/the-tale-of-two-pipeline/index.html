@@ -1,0 +1,313 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>The Tale of Two Pipelines - Gavin on Backend Technology</title>
+  <meta name="author" content="Gavin Huang">
+
+  
+  <meta name="description" content="Background I have came across a few articles that clear some of misconceptions around advanced analytics. Two of them, DataOps is NOT Just DevOps for &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://gavinhuang.github.io/blog/the-tale-of-two-pipeline">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Gavin on Backend Technology" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-90520554-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Gavin on Backend Technology</a></h1>
+  
+    <h2>backend and more</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:gavinhuang.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">The Tale of Two Pipelines</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2021-11-05T19:11:26+11:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2021</span></span> <span class='time'>7:11 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h3>Background</h3>
+
+<p>I have came across a few articles that clear some of misconceptions around advanced analytics. Two of them, <a href="https://medium.com/data-ops/dataops-is-not-just-devops-for-data-6e03083157b7">DataOps is NOT Just DevOps for Data</a> and <a href="https://locallyoptimistic.com/post/the-next-big-challenge-for-data-is-organizational">The Next Big Challenge for Data is Organizational</a> has been my favorite.</p>
+
+<p>I cherry-picked some of ideas from them, try to apply them to my work context, turns out it helped a lot to set my expectation correctly and align my plan with the overall organizational vision and strategy.</p>
+
+<p>Here are some punch lines:</p>
+
+<ol>
+<li><p>The fundamentally different between data warehousing and the advanced analytics (or machine learning application) is that the first one is value pipeline and the later is the innovation pipeline. Some other finding is derived from that perspective.</p></li>
+<li><p>It&rsquo;s the organizational factor that challenge data or advanced analytics projects.</p></li>
+</ol>
+
+
+<p>The first one set the tone for the second one, while the second one will make fundamental change to your organization&rsquo;s data approach ( sometimes can be right v.s wrong, rather than just different.).</p>
+
+<!--more-->
+
+
+<h3>Symptom of confusion</h3>
+
+<p>You can easily find people from variety of background in advanced analytics teams. For example, a data engineer could be a former DBA, or a application (mostly backend) developer, or a report developer (for a specific BI tool). When talking about building a modern data platform/application/pipelines, people tend to picture it based on their experiences in previous domain. Therefore, to some extend, to build the so called modern data platform is just using modern tools to build a data warehousing platform (for a former data modeler), or portfolio of applications with some common data set (for a former application developer).</p>
+
+<p>The discrepancies derived from the different understanding not only lead to complete different system design and process, but also the design of the team structure. A data warehousing-centric approach might force developers to develop data application in data warehousing system and vice versa.</p>
+
+<p>Both opinions got their supports, especially from data solution vendors. They tend to claim their product can solve most (if not all) data problem, so they tend to push for reference architecture that centered with their solution. For example, Snowflake, in my opinions is a cloud-based data warehousing platform, propagating data platform that are centered around snowflake; Databricks, the famous spark company, push for the concept of &ldquo;lakehouse&rdquo;.</p>
+
+<p>The discrepancies not only lead to different system architecture, but also determines the different team structure.  The &ldquo;data warehousing&rdquo; supporters tend to build a big team who not only control the production-harden warehousing system, but also provide essential support for other critical teams like data governance, data literacy, etc.  The &ldquo;Data application&rdquo; supporters tend to play down the important of data warehousing, deem the warehousing team as the data source for reporting. the words often heard in debating are: real-time, patterns, MLOps, operationalization, etc.</p>
+
+<h3>The Right Way?</h3>
+
+<p>So what is the right approach for a modern data platform and team? As always, there is no correct answer to the question. My current employer is a brick-mortar retail company, just a few years on its advanced analytic journey.  For company like this, any technical solution that claim to be the &ldquo;industry standard&rdquo; which covers the most trendy tech-stack that you could possibly think of, is suspicious. According to Conway&rsquo;s law, the team structure actually is a reflection of the architecture (or the opposite for an established team), Therefore, a simple but robust system requires less complicated team structure to carry out and quick to refactor to the change.</p>
+
+<h4>1. Architecture</h4>
+
+<p>According to <a href="https://medium.com/data-ops/dataops-is-not-just-devops-for-data-6e03083157b7">DataOps is NOT Just DevOps for Data</a> , there are two different kind of pipelines: the value pipeline and the innovation pipeline. Among many differences between the two, the most significant one in my opinion is the different variables in the system: the code and the data. Value pipelines deal with data change while the code mostly stable. Without further explanation, it immediately appear to me the value pipeline means data warehousing. Based my experience of data warehousing project, the every day problem is caused by the data change, while the code relatively stable.</p>
+
+<p>On the other hand, the innovation pipelines are more likely to be an application whose daily job is to deal with business logic change with code change (database is a tool to help facilitate the change). For innovation pipeline, the paramount principle is the quickly react to external change and apply the change as quick as possible.</p>
+
+<h4>2. Team Structure</h4>
+
+<p><a href="https://locallyoptimistic.com/post/the-next-big-challenge-for-data-is-organizational/">The Next Big Challenge for Data is Organizational</a>  believe the key to design a team structure is the contracts between teams. A good example is the front-end team and back-end team, while their skill set are different, the contracts between them to make system works are clean: the API (mostly restful API). To apply the same rule to modern platform, what is the contract a data warehousing team should adopt? Same question apply to data applications.</p>
+
+<p>Assume there is a protocol or contract can be drawn somewhere within the bigger group, then a team structure can be designed around that.</p>
+
+<h3>The Blurring Boundary</h3>
+
+<p>Again, there is no silver bullet to every organization, especially when data domain is still evolving dramatically. What I can see is new technologies such as dbt, snowflake and other workflow (orchestration) tools are redefine the boundary between data warehouse and data application. People from different background is quickly adopting to the new industry pattern. What a modern data team and platform should looks like is still to be answered.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Gavin Huang</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2021-11-05T19:11:26+11:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2021</span></span> <span class='time'>7:11 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/data/'>data</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://gavinhuang.github.io/blog/the-tale-of-two-pipeline/" data-via="" data-counturl="http://gavinhuang.github.io/blog/the-tale-of-two-pipeline/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/keras-based-word2vec-tutorial/" title="Previous Post: 基于Keras的Word2Vec教程">&laquo; 基于Keras的Word2Vec教程</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/the-tale-of-two-pipeline/">The Tale of Two Pipelines</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/keras-based-word2vec-tutorial/">基于Keras的Word2Vec教程</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/hive-on-spark/">Hive on Spark</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/machine-learning/">机器学习简介</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/set-up-big-data-cluster/">搭建大数据全栈集群</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/gavinHuang">@gavinHuang</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'gavinHuang',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2021 - Gavin Huang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'gavin-huang-on-backend';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://gavinhuang.github.io/blog/the-tale-of-two-pipeline/';
+        var disqus_url = 'http://gavinhuang.github.io/blog/the-tale-of-two-pipeline/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
