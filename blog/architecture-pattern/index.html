@@ -31,6 +31,18 @@
 <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 
   
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-90520554-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
 
 </head>
 
@@ -86,7 +98,7 @@
 
 <div class="entry-content"><h1>引言</h1>
 
-<p>最近难得有点空闲时间, 花了点精力了解了下架构的相关知识. Java程序员大多听说过GOF的设计模式, 而软件架构领域也不例外, O&#8217;reilly的开源电子书《Software architecture patterns》介绍了常用的五种架构模式. 其中有我本人有实际开发经验的就有四种,另外一个模式也是目前云计算领域比较流行的模式.
+<p>最近难得有点空闲时间, 花了点精力了解了下架构的相关知识. Java程序员大多听说过GOF的设计模式, 而软件架构领域也不例外, O'reilly的开源电子书《Software architecture patterns》介绍了常用的五种架构模式. 其中有我本人有实际开发经验的就有四种,另外一个模式也是目前云计算领域比较流行的模式.
 这些模式着眼于不同的角度,我根据我认为从小到大的顺序分别介绍一下.</p>
 
 <!-- more -->
@@ -108,7 +120,7 @@
 
 <h4>优势</h4>
 
-<p>分层架构最大的优势是每层可以只关注一种需求,更严谨的叫法应该叫&#8221;separation of concern&#8221;. 相对早期的架构,这样的模式更清晰可维护.</p>
+<p>分层架构最大的优势是每层可以只关注一种需求,更严谨的叫法应该叫"separation of concern". 相对早期的架构,这样的模式更清晰可维护.</p>
 
 <h4>劣势</h4>
 
@@ -136,7 +148,7 @@
 
 <p>如果业务逻辑较复杂, 或横跨多个应用时, 如何管理这些业务流程成为一个问题.</p>
 
-<p>事件驱动的架构将复杂的业务逻辑划分成一个个独立的时间处理模块,各个模块之间没有紧耦合的关系, 而是通过关注特定的事件输入,经过处理后产生特定的事件输出, 这个输出事件可以成为另外一个事件处理器的输入. 建立事件的输出与输入之间联系的可以是第三方中间件,比如消息队列. 根据事件消息的协调方式, 该模式可以再分为&#8221;协调者&#8221;的事件驱动模式和&#8221;代理人&#8221;的事件驱动模式.</p>
+<p>事件驱动的架构将复杂的业务逻辑划分成一个个独立的时间处理模块,各个模块之间没有紧耦合的关系, 而是通过关注特定的事件输入,经过处理后产生特定的事件输出, 这个输出事件可以成为另外一个事件处理器的输入. 建立事件的输出与输入之间联系的可以是第三方中间件,比如消息队列. 根据事件消息的协调方式, 该模式可以再分为"协调者"的事件驱动模式和"代理人"的事件驱动模式.</p>
 
 <p>基于这样的模式的产品诸如jBPM等.</p>
 
@@ -212,9 +224,17 @@
         <a class="basic-alignment left" href="/blog/permission-pattern-in-restful-paas/" title="Previous Post: Restful API的权限设计思考">&laquo; Restful API的权限设计思考</a>
       
       
+        <a class="basic-alignment right" href="/blog/angular-for-backend-developer/" title="Next Post: angular for backend developer">angular for backend developer &raquo;</a>
+      
     </p>
   </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -225,26 +245,55 @@
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/architecture-pattern/">五种常见的架构模式</a>
+        <a href="/blog/keras-based-word2vec-tutorial/">基于Keras的Word2Vec教程</a>
       </li>
     
       <li class="post">
-        <a href="/blog/permission-pattern-in-restful-paas/">Restful API的权限设计思考</a>
+        <a href="/blog/hive-on-spark/">Hive on Spark</a>
       </li>
     
       <li class="post">
-        <a href="/blog/jvm/">我理解的JVM</a>
+        <a href="/blog/machine-learning/">机器学习简介</a>
       </li>
     
       <li class="post">
-        <a href="/blog/nosql-transaction/">如何让nosql数据库支持事务</a>
+        <a href="/blog/set-up-big-data-cluster/">搭建大数据全栈集群</a>
       </li>
     
       <li class="post">
-        <a href="/blog/recognize-volatile/">重新认识volatile</a>
+        <a href="/blog/angular-for-backend-developer/">Angular for Backend Developer</a>
       </li>
     
   </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/gavinHuang">@gavinHuang</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'gavinHuang',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
 </section>
 
 
@@ -258,12 +307,28 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2015 - Gavin Huang -
+  Copyright &copy; 2017 - Gavin Huang -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
 </footer>
   
+
+<script type="text/javascript">
+      var disqus_shortname = 'gavin-huang-on-backend';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://gavinhuang.github.io/blog/architecture-pattern/';
+        var disqus_url = 'http://gavinhuang.github.io/blog/architecture-pattern/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
 
 
 

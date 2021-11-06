@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Database | Gavin on Backend Technology]]></title>
   <link href="http://gavinhuang.github.io/blog/categories/database/atom.xml" rel="self"/>
   <link href="http://gavinhuang.github.io/"/>
-  <updated>2015-04-21T16:36:27+08:00</updated>
+  <updated>2017-11-27T16:28:29+08:00</updated>
   <id>http://gavinhuang.github.io/</id>
   <author>
     <name><![CDATA[Gavin Huang]]></name>
@@ -47,7 +47,7 @@
 </ul>
 
 
-<p>其中，第一项&#8221;更新丢失&#8221;在大部分强一致性数据库系统中不会出现，因为这些系统通常都会采用锁的机制来保证同一数据同时只能被一个事务修改。</p>
+<p>其中，第一项"更新丢失"在大部分强一致性数据库系统中不会出现，因为这些系统通常都会采用锁的机制来保证同一数据同时只能被一个事务修改。</p>
 
 <p>围绕着如何在隔离性（以及他说产生的问题）与系统性能之间的平衡产生了一系列的隔离级别：</p>
 

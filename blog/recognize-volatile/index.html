@@ -31,6 +31,18 @@
 <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 
   
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-90520554-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
 
 </head>
 
@@ -244,6 +256,12 @@ Thread-write:</p>
   </footer>
 </article>
 
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
 </div>
 
 <aside class="sidebar">
@@ -253,26 +271,55 @@ Thread-write:</p>
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/architecture-pattern/">五种常见的架构模式</a>
+        <a href="/blog/keras-based-word2vec-tutorial/">基于Keras的Word2Vec教程</a>
       </li>
     
       <li class="post">
-        <a href="/blog/permission-pattern-in-restful-paas/">Restful API的权限设计思考</a>
+        <a href="/blog/hive-on-spark/">Hive on Spark</a>
       </li>
     
       <li class="post">
-        <a href="/blog/jvm/">我理解的JVM</a>
+        <a href="/blog/machine-learning/">机器学习简介</a>
       </li>
     
       <li class="post">
-        <a href="/blog/nosql-transaction/">如何让nosql数据库支持事务</a>
+        <a href="/blog/set-up-big-data-cluster/">搭建大数据全栈集群</a>
       </li>
     
       <li class="post">
-        <a href="/blog/recognize-volatile/">重新认识volatile</a>
+        <a href="/blog/angular-for-backend-developer/">Angular for Backend Developer</a>
       </li>
     
   </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/gavinHuang">@gavinHuang</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'gavinHuang',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
 </section>
 
 
@@ -286,12 +333,28 @@ Thread-write:</p>
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2015 - Gavin Huang -
+  Copyright &copy; 2017 - Gavin Huang -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
 </footer>
   
+
+<script type="text/javascript">
+      var disqus_shortname = 'gavin-huang-on-backend';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://gavinhuang.github.io/blog/recognize-volatile/';
+        var disqus_url = 'http://gavinhuang.github.io/blog/recognize-volatile/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
 
 
 
