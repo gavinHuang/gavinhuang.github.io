@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Data | Gavin on Backend Technology]]></title>
+  <link href="http://gavinhuang.github.io/blog/categories/data/atom.xml" rel="self"/>
+  <link href="http://gavinhuang.github.io/"/>
+  <updated>2021-11-06T16:00:28+11:00</updated>
+  <id>http://gavinhuang.github.io/</id>
+  <author>
+    <name><![CDATA[Gavin Huang]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[The Tale of Two Pipelines]]></title>
+    <link href="http://gavinhuang.github.io/blog/the-tale-of-two-pipeline/"/>
+    <updated>2021-11-05T19:11:26+11:00</updated>
+    <id>http://gavinhuang.github.io/blog/the-tale-of-two-pipeline</id>
+    <content type="html"><![CDATA[<h3>Background</h3>
+
+<p>I have came across a few articles that clear some of misconceptions around advanced analytics. Two of them, <a href="https://medium.com/data-ops/dataops-is-not-just-devops-for-data-6e03083157b7">DataOps is NOT Just DevOps for Data</a> and <a href="https://locallyoptimistic.com/post/the-next-big-challenge-for-data-is-organizational">The Next Big Challenge for Data is Organizational</a> has been my favorite.</p>
+
+<p>I cherry-picked some of ideas from them, try to apply them to my work context, turns out it helped a lot to set my expectation correctly and align my plan with the overall organizational vision and strategy.</p>
+
+<p>Here are some punch lines:</p>
+
+<ol>
+<li><p>The fundamentally different between data warehousing and the advanced analytics (or machine learning application) is that the first one is value pipeline and the later is the innovation pipeline. Some other finding is derived from that perspective.</p></li>
+<li><p>It&rsquo;s the organizational factor that challenge data or advanced analytics projects.</p></li>
+</ol>
+
+
+<p>The first one set the tone for the second one, while the second one will make fundamental change to your organization&rsquo;s data approach ( sometimes can be right v.s wrong, rather than just different.).</p>
+
+<!--more-->
+
+
+<h3>Symptom of confusion</h3>
+
+<p>You can easily find people from variety of background in advanced analytics teams. For example, a data engineer could be a former DBA, or a application (mostly backend) developer, or a report developer (for a specific BI tool). When talking about building a modern data platform/application/pipelines, people tend to picture it based on their experiences in previous domain. Therefore, to some extend, to build the so called modern data platform is just using modern tools to build a data warehousing platform (for a former data modeler), or portfolio of applications with some common data set (for a former application developer).</p>
+
+<p>The discrepancies derived from the different understanding not only lead to complete different system design and process, but also the design of the team structure. A data warehousing-centric approach might force developers to develop data application in data warehousing system and vice versa.</p>
+
+<p>Both opinions got their supports, especially from data solution vendors. They tend to claim their product can solve most (if not all) data problem, so they tend to push for reference architecture that centered with their solution. For example, Snowflake, in my opinions is a cloud-based data warehousing platform, propagating data platform that are centered around snowflake; Databricks, the famous spark company, push for the concept of &ldquo;lakehouse&rdquo;.</p>
+
+<p>The discrepancies not only lead to different system architecture, but also determines the different team structure.  The &ldquo;data warehousing&rdquo; supporters tend to build a big team who not only control the production-harden warehousing system, but also provide essential support for other critical teams like data governance, data literacy, etc.  The &ldquo;Data application&rdquo; supporters tend to play down the important of data warehousing, deem the warehousing team as the data source for reporting. the words often heard in debating are: real-time, patterns, MLOps, operationalization, etc.</p>
+
+<h3>The Right Way?</h3>
+
+<p>So what is the right approach for a modern data platform and team? As always, there is no correct answer to the question. My current employer is a brick-mortar retail company, just a few years on its advanced analytic journey.  For company like this, any technical solution that claim to be the &ldquo;industry standard&rdquo; which covers the most trendy tech-stack that you could possibly think of, is suspicious. According to Conway&rsquo;s law, the team structure actually is a reflection of the architecture (or the opposite for an established team), Therefore, a simple but robust system requires less complicated team structure to carry out and quick to refactor to the change.</p>
+
+<h4>1. Architecture</h4>
+
+<p>According to <a href="https://medium.com/data-ops/dataops-is-not-just-devops-for-data-6e03083157b7">DataOps is NOT Just DevOps for Data</a> , there are two different kind of pipelines: the value pipeline and the innovation pipeline. Among many differences between the two, the most significant one in my opinion is the different variables in the system: the code and the data. Value pipelines deal with data change while the code mostly stable. Without further explanation, it immediately appear to me the value pipeline means data warehousing. Based my experience of data warehousing project, the every day problem is caused by the data change, while the code relatively stable.</p>
+
+<p>On the other hand, the innovation pipelines are more likely to be an application whose daily job is to deal with business logic change with code change (database is a tool to help facilitate the change). For innovation pipeline, the paramount principle is the quickly react to external change and apply the change as quick as possible.</p>
+
+<h4>2. Team Structure</h4>
+
+<p><a href="https://locallyoptimistic.com/post/the-next-big-challenge-for-data-is-organizational/">The Next Big Challenge for Data is Organizational</a>  believe the key to design a team structure is the contracts between teams. A good example is the front-end team and back-end team, while their skill set are different, the contracts between them to make system works are clean: the API (mostly restful API). To apply the same rule to modern platform, what is the contract a data warehousing team should adopt? Same question apply to data applications.</p>
+
+<p>Assume there is a protocol or contract can be drawn somewhere within the bigger group, then a team structure can be designed around that.</p>
+
+<h3>The Blurring Boundary</h3>
+
+<p>Again, there is no silver bullet to every organization, especially when data domain is still evolving dramatically. What I can see is new technologies such as dbt, snowflake and other workflow (orchestration) tools are redefine the boundary between data warehouse and data application. People from different background is quickly adopting to the new industry pattern. What a modern data team and platform should looks like is still to be answered.</p>
+]]></content>
+  </entry>
+  
+</feed>

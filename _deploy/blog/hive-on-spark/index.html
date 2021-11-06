@@ -1,0 +1,414 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hive on Spark - Gavin on Backend Technology</title>
+  <meta name="author" content="Gavin Huang">
+
+  
+  <meta name="description" content="如果要问我使用Hive的最大的感受，那第一个出现的答案一定是：慢。
+不仅我这么说，Hive自己觉得挺过意不去的，所以他会建议你更换一个引擎： 1
+2
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://gavinhuang.github.io/blog/hive-on-spark">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Gavin on Backend Technology" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-90520554-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Gavin on Backend Technology</a></h1>
+  
+    <h2>backend and more</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:gavinhuang.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Hive on Spark</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-04-11T13:28:07+08:00'><span class='date'><span class='date-month'>Apr</span> <span class='date-day'>11</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>1:28 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>如果要问我使用Hive的最大的感受，那第一个出现的答案一定是：慢。
+不仅我这么说，Hive自己觉得挺过意不去的，所以他会建议你更换一个引擎：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. 
+</span><span class='line'>Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>本文只有一个目的：告诉你Hive切换成Spark引擎很简单，远远比官方文档描述得简单。</p>
+
+<!-- more -->
+
+
+<h2>背景</h2>
+
+<p>随着产品销量的提升，我负责的数据仓库系统数据量越来越大; 2016年针对一些SQL语句进行了优化，成果也不错； 但是今年准备对用户留存信息建立模型，进行分析或者预测。这个过程涉及很多数据处理，包括导入/导出/关联等等。这个时候Hive的速度慢的特点就特别明显，常常是执行一个查询之后要等半个小时才能出结果，有时候等到结果的时候都忘了开始的时候是执行什么查询了。</p>
+
+<p>俗话说，磨刀不误砍柴功，所以我觉得有必要在继续其他工作前先解决Hive的问题。</p>
+
+<p>方法很简单，按照Hive的警告信息建议的那样，换个引擎就好了。Tez我不熟，而Spark则相对熟悉一些，之前已经用spark+yarn做数据提取（ETL）的工作，所以Spark成了唯一的选择。</p>
+
+<p>教程官网上也有：
+<a href="https://cwiki.apache.org/confluence/display/Hive/Hive+on+Spark%3A+Getting+Started">https://cwiki.apache.org/confluence/display/Hive/Hive+on+Spark%3A+Getting+Started</a></p>
+
+<p>但是我个人觉得这不是一个很好的官方教程，很少有逻辑关系的演进，只有一个个的信息点，而且把必须的步骤和调优的步骤混为一谈，让初学者看得云里雾里。所以我觉得很有必要整理一个简洁的说明，不一定能解决所有问题，但是能对有切换Hive引擎的朋友传达一个清晰的步骤。</p>
+
+<h2>步骤:只有一步</h2>
+
+<p>是的，你没看错，Hive on Spark就是这么简单，只要一步就完成了：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>set hive.execution.engine=spark;</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>为什么这么简单？</strong></p>
+
+<p>这是由于Hive（我猜看到这篇文章的你，不会是基于Hive1.1之前的版本了）已经做了集成的工作。比如这个类：</p>
+
+<p><code>org.apache.hadoop.hive.ql.exec.spark.SparkTask</code></p>
+
+<p>就已经是在Hive的lib里的了。</p>
+
+<h2>问题</h2>
+
+<p>现实里当然不会这么简单，不然也不会有本文了。当你执行完上述命令之后，想执行任意的HQL查询，会碰到各种各样的错误。而在我看来这些问题的核心问题就是：</p>
+
+<blockquote><p><strong>版本问题</strong>
+<strong>版本问题</strong>
+<strong>版本问题</strong></p></blockquote>
+
+<p>P.S: 我这里的假设是你的环境里已经有了Spark系统。</p>
+
+<p>所以Hive on Spark的核心问题就是找到一个匹配的Spark依赖包，这点官网文档没有特别提及。</p>
+
+<p>问题分为两个子问题：</p>
+
+<blockquote><p><strong>1. 找到你的Hive能匹配的Spark版本</strong>
+<strong>2. 编译一个不带Hive库的Spark包（防止跟Hive运行时的类冲突）</strong>
+下面具体介绍这两个步骤。</p></blockquote>
+
+<h2>真实步骤：有两部</h2>
+
+<h3>1、找到合适的Spark版本</h3>
+
+<p>一定要特别注意第一个问题，官方文档里轻描淡写的一句话，却是问题的核心：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Install/build a compatible version</span></code></pre></td></tr></table></div></figure>
+
+
+<p>一定要找到跟Hive匹配的Spark版本，这个可以从Hive源代码的pom.xml文件里找到，以我的Hive 2.0.0来说，pom.xml里指定的Spark版本是1.5.0。</p>
+
+<p>但是加入你已经搭建的Spark系统版本不合适，也不用急着替换掉，这里指的Spark版本，只是作为Hive的依赖库，而不是实际运行的Spark版本。所以可能会出现这样的情况：Hive里以来的Spark是1.5，然后提交任务到Spark1.6.1的集群里，照样能正常工作。</p>
+
+<h3>2、编译一个不带Hive的Spark</h3>
+
+<p>这个步骤官方也说了：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>./make-distribution.sh --name "hadoop2-without-hive" --tgz "-Pyarn,hadoop-provided,hadoop-2.4,parquet-provided"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是没有说明的是，这里的hadoop2.4只是pom.xml里的一个任务名字，如果你的hadoop是2.4，可以直接用这个命令，但是如果是2.6+（比如像我的2.7）的话，这要将hadoop-2.4换成hadoop2.6。</p>
+
+<p>另外，也特别注意另外几个版本问题：</p>
+
+<blockquote><p><strong>1. Java 版本</strong>
+<strong>2. Scala版本</strong>
+<strong>3. Maven版本</strong></p></blockquote>
+
+<p>这个pom.xml文件里指定了Java版本为1.7，我的系统里版本是1.8，所以要修改pom.xml，修改java版本为1.8。另外我的系统里，make-distribution.sh不能自动识别JAVA_HOME环境变量，所以要在脚本里指定JAVA_HOME的至。
+第二，由于默认Scala版本为2.10，而我的scala为2.11，所以需要调用一个脚本修改下依赖的scala版本：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>./dev/change-scala-version.sh 2.11</span></code></pre></td></tr></table></div></figure>
+
+
+<p>第三个问题，maven的版本问题。编译脚本会自动下载Maven和Scala，但是如果系统自带的Maven在PATH目录里的话，则还是会用系统的版本。我的系统版本为3.0.5，编译中一直报告莫名其妙的错误。将Maven升级到3.3.9之后则问题自动消失。</p>
+
+<h2>最后一步：使用Spark依赖包</h2>
+
+<p>一旦Spark包编译完成，这可以直接拷贝或者建立软链接到Hive的lib目录里。
+这样Hive启动后，使用本文开始的命令：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>set hive.execution.engine=spark;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>之后的查询就会使用spark来执行命令了。</p>
+
+<h2>速度的提升</h2>
+
+<p>Spark之所以能提升Hive查询的速度，本质有两个原因：</p>
+
+<blockquote><ol>
+<li>缓存在内存中</li>
+<li>省略中间shuffle的过程</li>
+</ol>
+</blockquote>
+
+<p>这也提示了只有在有多个查询子过程的HQL的时候和/或内存中的数据能被第二次使用到的时候，查询速度才会提高。
+比如这样一个简单的句子：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>select count(*) from table_1;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在第一次查询时，使用Spark引擎和使用MR引擎并没有太多的速度差别。但是spark的好处在于，第二次查询的时候，MR引擎话费的时间跟第一次一样，而Spark引擎的查询速度则有数量级的优化。</p>
+
+<p>另外，在有关联操作、Group操作、Union操作时，Spark引擎能立刻提升执行速度。速度会比MR引擎快接近10倍左右，当然具体提升幅度也依赖其他因素。</p>
+
+<h2>跟其他系统的集成</h2>
+
+<p>一种比较常见的用法是利用hive跟Hbase/Elasticsearch等系统集成，这样可以通过HQL访问其他系统的数据。
+这里以跟Hbase集成为例，需要在HiverServer和Hive Cli的机器中的hive-site.xml中配置</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;property&gt;
+</span><span class='line'>    &lt;name&gt;hive.aux.jars.path&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;file:///path/to/hbase-jars, separated by comma.these file can be found at HBASE_HOME/lib/hbase*&lt;/value&gt;
+</span><span class='line'>    &lt;description&gt;The location of the plugin jars that contain implementations of user defined functions and serdes.&lt;/description&gt;
+</span><span class='line'>  &lt;/property&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Gavin Huang</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2017-04-11T13:28:07+08:00'><span class='date'><span class='date-month'>Apr</span> <span class='date-day'>11</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>1:28 pm</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://gavinhuang.github.io/blog/hive-on-spark/" data-via="" data-counturl="http://gavinhuang.github.io/blog/hive-on-spark/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/machine-learning/" title="Previous Post: 机器学习简介">&laquo; 机器学习简介</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/keras-based-word2vec-tutorial/" title="Next Post: 基于Keras的Word2Vec教程">基于Keras的Word2Vec教程 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/the-tale-of-two-pipeline/">The Tale of Two Pipelines</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/keras-based-word2vec-tutorial/">基于Keras的Word2Vec教程</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/hive-on-spark/">Hive on Spark</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/machine-learning/">机器学习简介</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/set-up-big-data-cluster/">搭建大数据全栈集群</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/gavinHuang">@gavinHuang</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'gavinHuang',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2021 - Gavin Huang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'gavin-huang-on-backend';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://gavinhuang.github.io/blog/hive-on-spark/';
+        var disqus_url = 'http://gavinhuang.github.io/blog/hive-on-spark/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,666 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Gavin on Backend Technology</title>
+  <meta name="author" content="Gavin Huang">
+
+  
+  <meta name="description" content="Background I have came across a few articles that clear some of misconceptions around advanced analytics. Two of them, DataOps is NOT Just DevOps for &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://gavinhuang.github.io">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Gavin on Backend Technology" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-90520554-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Gavin on Backend Technology</a></h1>
+  
+    <h2>backend and more</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:gavinhuang.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/the-tale-of-two-pipeline/">The Tale of Two Pipelines</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2021-11-05T19:11:26+11:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2021</span></span> <span class='time'>7:11 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>Background</h3>
+
+<p>I have came across a few articles that clear some of misconceptions around advanced analytics. Two of them, <a href="https://medium.com/data-ops/dataops-is-not-just-devops-for-data-6e03083157b7">DataOps is NOT Just DevOps for Data</a> and <a href="https://locallyoptimistic.com/post/the-next-big-challenge-for-data-is-organizational">The Next Big Challenge for Data is Organizational</a> has been my favorite.</p>
+
+<p>I cherry-picked some of ideas from them, try to apply them to my work context, turns out it helped a lot to set my expectation correctly and align my plan with the overall organizational vision and strategy.</p>
+
+<p>Here are some punch lines:</p>
+
+<ol>
+<li><p>The fundamentally different between data warehousing and the advanced analytics (or machine learning application) is that the first one is value pipeline and the later is the innovation pipeline. Some other finding is derived from that perspective.</p></li>
+<li><p>It&rsquo;s the organizational factor that challenge data or advanced analytics projects.</p></li>
+</ol>
+
+
+<p>The first one set the tone for the second one, while the second one will make fundamental change to your organization&rsquo;s data approach ( sometimes can be right v.s wrong, rather than just different.).</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/the-tale-of-two-pipeline/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/keras-based-word2vec-tutorial/">基于Keras的Word2Vec教程</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-11-27T16:13:00+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>27</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>4:13 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><blockquote><p>原文：<a href="http://adventuresinmachinelearning.com/word2vec-keras-tutorial/">http://adventuresinmachinelearning.com/word2vec-keras-tutorial/</a></p></blockquote>
+
+<p><img src="/images/imgs/20171127-155408.png" alt="" /></p>
+
+<p>Word2Vec负取样架构图</p>
+
+<p>理解Word2Vec的词嵌入对学习机器学习来说至关重要。 词嵌入也是自然语言处理的关键一步。 本教程展示如何利用深度学习框架Keras来实现Word2Vec。关于Keras的介绍，请参考我的<a href="http://adventuresinmachinelearning.com/keras-tutorial-cnn-11-lines/">另外一篇文章</a>。在我的<a href="http://adventuresinmachinelearning.com/word2vec-tutorial-tensorflow/">前一篇文章里</a>，我介绍了基于TensorFlow的Word2Vec实现，并且说明了一个简单的、基于softmax的机制在大词量，训练嵌入层相当慢的情况的情况，通过引入了"negative sampling"的机制，并且在tensorflow中定制了loss function，即nce_loss来解决问题。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/keras-based-word2vec-tutorial/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/hive-on-spark/">Hive on Spark</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-04-11T13:28:07+08:00'><span class='date'><span class='date-month'>Apr</span> <span class='date-day'>11</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>1:28 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>如果要问我使用Hive的最大的感受，那第一个出现的答案一定是：慢。
+不仅我这么说，Hive自己觉得挺过意不去的，所以他会建议你更换一个引擎：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. 
+</span><span class='line'>Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>本文只有一个目的：告诉你Hive切换成Spark引擎很简单，远远比官方文档描述得简单。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/hive-on-spark/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/machine-learning/">机器学习简介</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-01-18T12:41:33+08:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>18</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>12:41 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>前言</h3>
+
+<p>机器学习作为AI的一个核心领域，重要性不言而喻。本文尝试从本人了解机器学习的过程来解释什么是机器学习。</p>
+
+<h3>缘起</h3>
+
+<p>由于手上有个IoT项目的数据需要分析，所以去年花了些精力研究数据分析领域的知识和方法。其中一个任务是给用户进行分类（确切地说应该是聚类），进而了解到了spark中的clustering算法，而这类算法通常被归类为机器学习的无监督学习。这样就接触到了机器学习。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/machine-learning/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/set-up-big-data-cluster/">搭建大数据全栈集群</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-01-12T10:24:44+08:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>12</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>10:24 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>前言</h3>
+
+<p>从2015年开始搭建数据分析系统以来，已经过了一年多时间，有必要对之前搭建的经历做一个总结。
+本问主要包含以下几个系统/框架</p>
+
+<ul>
+<li>Hadoop (HDFS/YARN)</li>
+<li>Hive</li>
+<li>HBase</li>
+<li>ZooKeeper</li>
+<li>Spark</li>
+</ul>
+
+
+<p>其中hadoop的HDFS做为Hive和Hbase的存储基础设施，也保存历史日志数据。
+YARN则做为spark的任务执行调度，
+引入Hbase则是为了补充Hive不方便做部分内容更新的问题。
+ZooKeeper做为Hbase的支撑，也为未来其他以来zk的系统做支撑。
+Spark的作用有很多，目前搭建的目的主要是做为数据解析处理的工具。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/set-up-big-data-cluster/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/angular-for-backend-developer/">Angular for Backend Developer</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-11-29T10:24:48+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>10:24 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>内容概要</h2>
+
+<ul>
+<li>意义</li>
+<li>核心概念</li>
+<li>实例</li>
+</ul>
+
+
+<h2>意义</h2>
+
+<p>Angular作为前端的MVC框架，直接利用了服务器端开发的概念，即表现层和逻辑层分离，数据和逻辑通过控制器分发，并且通过request, session, global 等来传递数据和模型(model)。
+angular也提供了控制器、业务服务功能，并且通过相关的指令（Directive）实现类似JSP内嵌Java代码的功能。而数据在视图和控制器之间的传递则通过scope完成。
+最关键的是，由于数据和视图都在浏览器中，给数据和视图的实时双向绑定提供了基础，所以angular的变量改变可以直接体现到视图中，反之亦然。</p>
+
+<h2>核心概念</h2>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/angular-for-backend-developer/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/architecture-pattern/">五种常见的架构模式</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-04-20T16:30:33+08:00'><span class='date'><span class='date-month'>Apr</span> <span class='date-day'>20</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>4:30 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h1>引言</h1>
+
+<p>最近难得有点空闲时间, 花了点精力了解了下架构的相关知识. Java程序员大多听说过GOF的设计模式, 而软件架构领域也不例外, O'reilly的开源电子书《Software architecture patterns》介绍了常用的五种架构模式. 其中有我本人有实际开发经验的就有四种,另外一个模式也是目前云计算领域比较流行的模式.
+这些模式着眼于不同的角度,我根据我认为从小到大的顺序分别介绍一下.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/architecture-pattern/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/permission-pattern-in-restful-paas/">Restful API的权限设计思考</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-02-28T10:08:40+08:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>28</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:08 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>前言</h3>
+
+<p>基于Restful风格的API设计规范已经被广泛接受。鄙公司也不例外，我们的系统基于Micro Service的理念，各个Services（服务）将功能发布为遵循Restful风格的API，每个服务即成为可对外发布的独立单元，服务之间的组合又可成为新的服务，称为BaaS（Back-end as a Service)。</p>
+
+<p>由于各个服务需要单独对外提供服务，并且各个服务之间的业务差别比较大，所以在如何控制资源的权限，确保资源不被意外篡改和非法获取，又不违反Micro-Service的理念（单一业务职责）成为每个服务都要考虑的问题，即如何在开放和安全上做到平衡。</p>
+
+<h3>基本结构</h3>
+
+<p>我们总结下来，基本原则当然是遵循Restful规范 （为什么必须遵循Restful规范？如果这是个问题的话，请参考：<a href="http://stackoverflow.com/questions/1368014/why-do-we-need-restful-web-services">http://stackoverflow.com/questions/1368014/why-do-we-need-restful-web-services</a> ）。</p>
+
+<p>由于功能API都遵循Restful，所以我们把权限的分为如下几种：</p>
+
+<ul>
+<li>读：GET</li>
+<li>写：PUT</li>
+<li>新建：POST</li>
+<li>删除：DELETE</li>
+<li>获得元信息：HEAD</li>
+<li>获得对该资源的可用操作：OPTIONS</li>
+</ul>
+
+
+<p>基于这样的设计，我们把权限信息设计为这样的json结构：</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/permission-pattern-in-restful-paas/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/jvm/">我理解的JVM</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-12-15T10:22:56+08:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>15</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>10:22 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>前言</h3>
+
+<p>作为一个Java程序员，JVM（Java虚拟机，下简称虚拟机）将执行我们编写的代码，并搞定包括内存管理之类的工作，可以说虚拟机是我们的服务提供商，我们是他的客户。从这个角度来说，虚拟机的架构和原理不是必须掌握的知识。然而总会有一些时刻会让我们恨不得把虚拟机扒个精光看透里面的所有花样，搞明白为什么我们的程序会出现诸如“OutOfMemoryError: ”、”StackOverFlow”的错误，或者为什么我们的程序就是那么慢，为什么就不能承受大流量的冲击呢。
+本文是对本人对虚拟机的知识的一个总结，感谢以下几个信息来源：</p>
+
+<ul>
+<li>《深入Java虚拟机》</li>
+<li>Java 内存模型：Infoq的迷你书</li>
+<li>Java深度探险：infoq的迷你书</li>
+<li><a href="https://docs.oracle.com/javase/specs/jvms/se7/html/index.html:">https://docs.oracle.com/javase/specs/jvms/se7/html/index.html:</a> java官方文档</li>
+</ul>
+
+
+<p>内容大致分为如下几个方面：</p>
+
+<ol>
+<li>虚拟机内部架构和Java内存模型</li>
+<li>虚拟机支持的特性，如多线程，并发控制，多态的实现、类加载</li>
+</ol>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/jvm/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/nosql-transaction/">如何让nosql数据库支持事务</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-10-08T18:07:12+08:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>6:07 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>前言</h3>
+
+<p>关系型数据库如SQL server, Oracle, mysql这类强一致性的数据库天然地支持数据库事务，而大部分NoSQL数据库（如Riak）则由于没有隔离性、锁机制等原因不能实现数据库事务，要实现事务控制则必须从应用层面来处理。本文以Riak为例，介绍基于nosql数据库的应用如何实现数据库事务的方案。</p>
+
+<h3>事务和隔离性</h3>
+
+<p>在开始介绍方案前，先简单回顾下事务的四个特性（ACID）：</p>
+
+<ul>
+<li>atomicity</li>
+<li>consistency</li>
+<li>isolation</li>
+<li>durability</li>
+</ul>
+
+
+<p>其中，隔离性是指多个事务（用户）之前的操作不会相互影响，多个事务并行执行结果应该与各个事务串行执行结果一致。注意，这里说的是执行结果应该与串行执行一致，而不是必须串行地执行，因为串行执行会成为性能提升的瓶颈。不同的隔离性会产生不同的副作用，比如：</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/nosql-transaction/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/posts/2">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/the-tale-of-two-pipeline/">The Tale of Two Pipelines</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/keras-based-word2vec-tutorial/">基于Keras的Word2Vec教程</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/hive-on-spark/">Hive on Spark</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/machine-learning/">机器学习简介</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/set-up-big-data-cluster/">搭建大数据全栈集群</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/gavinHuang">@gavinHuang</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'gavinHuang',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2021 - Gavin Huang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'gavin-huang-on-backend';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

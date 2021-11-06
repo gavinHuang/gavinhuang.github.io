@@ -1,0 +1,785 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>搭建大数据全栈集群 - Gavin on Backend Technology</title>
+  <meta name="author" content="Gavin Huang">
+
+  
+  <meta name="description" content="前言 从2015年开始搭建数据分析系统以来，已经过了一年多时间，有必要对之前搭建的经历做一个总结。
+本问主要包含以下几个系统/框架 Hadoop (HDFS/YARN)
+Hive
+HBase
+ZooKeeper
+Spark 其中hadoop的HDFS做为Hive和Hbase的存储基础设施， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://gavinhuang.github.io/blog/set-up-big-data-cluster">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Gavin on Backend Technology" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-90520554-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Gavin on Backend Technology</a></h1>
+  
+    <h2>backend and more</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:gavinhuang.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">搭建大数据全栈集群</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2017-01-12T10:24:44+08:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>12</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>10:24 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h3>前言</h3>
+
+<p>从2015年开始搭建数据分析系统以来，已经过了一年多时间，有必要对之前搭建的经历做一个总结。
+本问主要包含以下几个系统/框架</p>
+
+<ul>
+<li>Hadoop (HDFS/YARN)</li>
+<li>Hive</li>
+<li>HBase</li>
+<li>ZooKeeper</li>
+<li>Spark</li>
+</ul>
+
+
+<p>其中hadoop的HDFS做为Hive和Hbase的存储基础设施，也保存历史日志数据。
+YARN则做为spark的任务执行调度，
+引入Hbase则是为了补充Hive不方便做部分内容更新的问题。
+ZooKeeper做为Hbase的支撑，也为未来其他以来zk的系统做支撑。
+Spark的作用有很多，目前搭建的目的主要是做为数据解析处理的工具。</p>
+
+<!-- more -->
+
+
+<h3>准备</h3>
+
+<h4>硬件</h4>
+
+<p>四台服务器，其中一台为跳板机和工作机，其他三台为集群机；三台中的一台做为hadoop的name node</p>
+
+<h4>软件</h4>
+
+<ul>
+<li>JRE</li>
+<li>Scala (跳板机)</li>
+<li>SSH Private Key/Public Key</li>
+<li>各个软件的最新版</li>
+<li>本地DNS服务器</li>
+</ul>
+
+
+<p>另外需要给三台集群机器配置免密码的ssh　public key, 并且创建相同的用户（我用了默认的ubuntu用户），因为大部分hadoop/spark的启动命令都是通过ssh直接发送的。
+建议是通过：<code>ssh-keygen -t rsa</code>创建key pair，并将public key的内容拷贝到各台机器的<code>~/.ssh/authorized_keys</code>文件中。</p>
+
+<p>DNS服务器的目的是由于在云主机的环境里，每次重启IP地址都会发生变化，而配置文件中不少地方都会需要指定主机名或IP地址，尤其是Hbase等，对这块尤其挑剔，配置成主机名经常造成莫名其妙的错误，一个比较简单的方案是用一个网络内的机器做DNS服务器（通过DNSMask等软件），并将其IP设置为所有主机的首选域名解析地址。
+比如这样的配置 /etc/network/interfaces：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>dns-nameservers 10.19.100.100</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Step 1: 配置执行路径</h3>
+
+<p>在每台机器上的/etc/profile文件都进行如下配置：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>HADOOP_PREFIX=/home/ubuntu/hadoop-2.7.2
+</span><span class='line'>HADOOP_HOME=/home/ubuntu/hadoop-2.7.2
+</span><span class='line'>HADOOP_CONF_DIR=/home/ubuntu/hadoop-2.7.2/etc/hadoop
+</span><span class='line'>HBASE_HOME=/home/ubuntu/hbase-1.1.4
+</span><span class='line'>HIVE_HOME=/home/ubuntu/apache-hive-2.0.0-bin
+</span><span class='line'>JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-amd64
+</span><span class='line'>SPARK_HOME=/home/ubuntu/spark-1.6.1-bin-hadoop2.6
+</span><span class='line'>ZOOKEEPER_HOME=/home/ubuntu/zookeeper-3.4.8
+</span><span class='line'>
+</span><span class='line'>PATH=/home/ubuntu/spark-1.6.1-bin-hadoop2.6 /bin:/home/ubuntu/hbase-1.1.4/bin:/home/ubuntu/apache-hive-2.0.0-bin/hcatalog/bin:/home/ubuntu/apache-hive-2.0.0-bin/bin:/home/ubuntu/hadoop-2.7.2/bin:$PATH</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Step　2: 配置Ｈadoop</h3>
+
+<p>hadoop的几个核心配置文件是：</p>
+
+<ul>
+<li>$HADOOP_HOME/etc/hadoop/core-site.xml</li>
+<li>$HADOOP_HOME/etc/hadoop/hdfs-site.xml</li>
+<li>$HADOOP_HOME/etc/hadoop/yarn-site.xml</li>
+<li>$HADOOP_HOME/etc/hadoop/mapred-site.xml</li>
+</ul>
+
+
+<p>分别代表hadoop的几个核心组件：核心、hdfs、yarn、mapreduce
+大部分的配置使用默认就可以，需要配置的主要有如下几个：</p>
+
+<ul>
+<li>HDFS Name Node文件保存路径</li>
+<li>HDFS Data Node 文件保持路径，这也是HDFS上的文件实际存储的路径</li>
+<li>fs.defaultFS  默认文件系统，通常指定name node的地址：hdfs://master.local:8020</li>
+<li>Resource Host:　资源管理器的url
+除此之外，由于任务运行需要分配到不同的机器，而运行任务需要一个用户身份，就是代理用户，需要配置代理身份的用户名和组名。</li>
+</ul>
+
+
+<p>以下是实际配置：
+core-site.xml</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  &lt;property&gt;
+</span><span class='line'>     &lt;name&gt;fs.defaultFS&lt;/name&gt;
+</span><span class='line'>     &lt;value&gt;hdfs://master.local:8020&lt;/value&gt;
+</span><span class='line'>  &lt;/property&gt;
+</span><span class='line'>  &lt;property&gt;
+</span><span class='line'>    &lt;name&gt;hadoop.proxyuser.ubuntu.hosts&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;*&lt;/value&gt;
+</span><span class='line'>  &lt;/property&gt;
+</span><span class='line'>  &lt;property&gt;
+</span><span class='line'>    &lt;name&gt;hadoop.proxyuser.ubuntu.groups&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;*&lt;/value&gt;
+</span><span class='line'>  &lt;/property&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>hdfs-site.xml</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>   &lt;property&gt;
+</span><span class='line'>      &lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;
+</span><span class='line'>      &lt;value&gt;file:///data/hdfs/namenode&lt;/value&gt;
+</span><span class='line'>   &lt;/property&gt;
+</span><span class='line'>   &lt;property&gt;
+</span><span class='line'>      &lt;name&gt;dfs.datanode.data.dir&lt;/name&gt;
+</span><span class='line'>      &lt;value&gt;file:///data/hdfs/datanode&lt;/value&gt;
+</span><span class='line'>   &lt;/property&gt;
+</span><span class='line'>  &lt;property&gt;
+</span><span class='line'>    &lt;name&gt;dfs.namenode.datanode.registration.ip-hostname-check&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;false&lt;/value&gt;
+</span><span class='line'>  &lt;/property&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>yarn-site.xml</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  &lt;property&gt;
+</span><span class='line'>    &lt;name&gt;yarn.resourcemanager.hostname&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;master.local&lt;/value&gt;
+</span><span class='line'>  &lt;/property&gt;
+</span><span class='line'>  &lt;property&gt;
+</span><span class='line'>    &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;mapreduce_shuffle&lt;/value&gt;
+</span><span class='line'>  &lt;/property&gt;
+</span><span class='line'>  &lt;-- 禁止系统在任务内存消耗超过一定比率时强制杀掉进程，减少任务直接中断的概率，也可以不配置--&gt;
+</span><span class='line'>  &lt;property&gt;
+</span><span class='line'>    &lt;name&gt;yarn.nodemanager.vmem-check-enabled&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;false&lt;/value&gt;
+</span><span class='line'>  &lt;/property&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>mapred-site.xml</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;!-- 指定由yarn来管理mapreduce的任务--&gt;
+</span><span class='line'>  &lt;property&gt;
+</span><span class='line'>    &lt;name&gt;mapreduce.framework.name&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;yarn&lt;/value&gt;
+</span><span class='line'>  &lt;/property&gt;
+</span><span class='line'>  &lt;!-- 更新任务历史的通讯地址--&gt;
+</span><span class='line'>  &lt;property&gt;
+</span><span class='line'>    &lt;name&gt;mapreduce.jobhistory.address&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;master.local:10020&lt;/value&gt;
+</span><span class='line'>  &lt;/property&gt;
+</span><span class='line'>    &lt;!-- 查看任务历史的网页地址，这两个配置都指向到name node--&gt;
+</span><span class='line'>  &lt;property&gt;
+</span><span class='line'>    &lt;name&gt;mapreduce.jobhistory.webapp.address&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;master.local:19888&lt;/value&gt;
+</span><span class='line'>  &lt;/property&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>除了xml配置，还需要给启动脚本配置两个文件，帮助启动脚本确定应该在哪台服务器启动哪些服务器，主要区分为:</p>
+
+<ul>
+<li>master</li>
+<li>slave
+master文件指定name node和resource manager的地址（都是同一个服务器）
+slave文件则指定data node 和node manager的地址
+这两个文件都一行一个值。</li>
+</ul>
+
+
+<p>以上配置应该在三台集群机都是一样的。</p>
+
+<p>之后就可以启动hadoop了（具体来说是启动hdfs和yarn）。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sbin/start-hdfs.sh
+</span><span class='line'>sbin/start-yarn.sh</span></code></pre></td></tr></table></div></figure>
+
+
+<p>第一次启动之后，需要对文件系统进行格式化：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>hdfs namenode -format</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>step3 配置Hive</h3>
+
+<p>Hive其实有两部分：一部分是SQL解析引擎，一部分是表结构等相关信息的存储功能。
+在hive的安装目录下的hive其实是第一部分，另外一部分需要保存元信息，需要数据库，比如postgresql或mysql，这里用mysql。这另一部分可以分为：server和meta store。这两个部分在直接用hive时用出不大，但是当hive需要跟其他部分集成时特别重要，比如跟spark集成时，spark需要从hive中读取数据，则需要通过hiveserver访问Hive资源。</p>
+
+<p>如果不做其他配置，启动hive会碰到类似这样的错误：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Exception in thread "main" java.lang.RuntimeException: Hive metastore database is not initialized. Please use schematool (e.g. ./schematool -initSchema -dbType ...) to create the schema. If needed, don't forget to include the option to auto-create the underlying database in your JDBC connection string (e.g. ?createDatabaseIfNotExist=true for mysql)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>错误信息基本说明了问题所在：</p>
+
+<ul>
+<li>schema 还未初始化</li>
+<li>数据库链接未配置
+基于如下配置：</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;property&gt;
+</span><span class='line'>    &lt;name&gt;datanucleus.autoCreateTables&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;true&lt;/value&gt;
+</span><span class='line'>&lt;/property&gt;
+</span><span class='line'>&lt;property&gt;
+</span><span class='line'>    &lt;name&gt;datanucleus.autoStartMechanism&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;SchemaTable&lt;/value&gt;
+</span><span class='line'>&lt;/property&gt;
+</span><span class='line'>&lt;property&gt;
+</span><span class='line'>    &lt;name&gt;hive.metastore.schema.verification&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;false&lt;/value&gt;
+</span><span class='line'>&lt;/property&gt;
+</span><span class='line'>&lt;property&gt;
+</span><span class='line'>    &lt;name&gt;javax.jdo.option.ConnectionURL&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;jdbc:mysql://127.0.0.1:3306/metastore?createDatabaseIfNotExist=true&lt;/value&gt;
+</span><span class='line'>&lt;/property&gt;
+</span><span class='line'>&lt;property&gt;
+</span><span class='line'>    &lt;name&gt;javax.jdo.option.ConnectionDriverName&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;com.mysql.jdbc.Driver&lt;/value&gt;
+</span><span class='line'>&lt;/property&gt;
+</span><span class='line'>&lt;property&gt;
+</span><span class='line'>    &lt;name&gt;javax.jdo.option.ConnectionUserName&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;username&lt;/value&gt;
+</span><span class='line'>&lt;/property&gt;
+</span><span class='line'>&lt;property&gt;
+</span><span class='line'>    &lt;name&gt;javax.jdo.option.ConnectionPassword&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;password&lt;/value&gt;
+</span><span class='line'>&lt;/property&gt;
+</span><span class='line'>&lt;property&gt;
+</span><span class='line'>    &lt;name&gt;hive.metastore.uris&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;thrift://master.local:9083&lt;/value&gt;
+</span><span class='line'>&lt;/property&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>执行如下命令:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$HIVE_HOME/bin/schematool -dbType mysql -initSchema</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以将hive初始化。
+hive的客户接口除了hive命令行之外，还有hiveserver2自带的beeline，beeline的功能更多，比如用户管理，权限管理等等。</p>
+
+<p>同时为今后与其他系统集成，在集群的master机上运行：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$HIVE_HOME/bin/hive --service hiveserver2
+</span><span class='line'>$HIVE_HOME/bin/hive --service metastore</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>step4 配置Spark</h3>
+
+<p>spark跟hive类似，其实是hadoop集群的客户端，或者叫driver驱动器，也即由spark向yarn集群提交任务，具体执行是在yarn管理的node里运行jvm执行(spark的scala也是jvm语言)。加上spark会自动识别系统里的hadoop配置文件（比如resource manager的地址），所以spark需要配置的东西其实不多。
+通常只需将hive-site.xml配置文件拷贝到spark的conf目录下，这样在使用HiveContext时，能自动找到hive表的schema。</p>
+
+<h3>step5 配置ZooKeeper</h3>
+
+<p>zookeeper不是必须的，整个系统中只有hbase用到了zk，而hbase中自带有zk，可以直接启动hbase的zk。为了保持zk的独立性，也为了今后其他系统接入方便，特别将zk独立出来。</p>
+
+<p>由于zk没有主从概念，所以三台机器的配置都是类似的，唯一的区别是需要为每个节点分配一个唯一的节点标识，并且需要在配置文件中指定其他节点的地址。
+下面是一个节点的配置：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>dataDir=/data/zookeeper
+</span><span class='line'>server.1=master.local:2888:3888
+</span><span class='line'>server.2=slave1.local:2888:3888
+</span><span class='line'>server.3=slave2.local:2888:3888</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中的两个端口分别表示：zk节点内部通信用的端口、主节点选举时用的通讯端口。
+在配置中指定的文件目录（这里为:/data/zookeeper），需要一个文件myid，里面的内容为节点标识，比如第一个节点的内容就是１</p>
+
+<p>配置完成之后在每个节点执行：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bin/zkServer.sh start</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Step6 配置Hbase</h3>
+
+<p>Hbase基于HDFS文件系统，弥补了直接在HDFS上或在HIve表里管理数据的一些缺点，可以方便地进行增删查改的操作，而且Hbase基于列的存储，也决定了他可以方便地调整数据结构。如果配合hive表，则可以实现sql接口的hbase表操作，将Hive表视为hbase的一种“视图”。
+Hbase集群有两种角色，一种是master，一种是regionserver，类似hadoop的data node。
+需要配置的主要内容有：</p>
+
+<ul>
+<li>文件存储目录（HDFS系统而言）</li>
+<li>ZooKeeper配置
+下面是一个例子：</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> &lt;property&gt;
+</span><span class='line'>    &lt;name&gt;hbase.rootdir&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;hdfs://master.local:8020/hbase&lt;/value&gt;
+</span><span class='line'>  &lt;/property&gt;
+</span><span class='line'>  &lt;property&gt;
+</span><span class='line'>    &lt;name&gt;hbase.zookeeper.property.dataDir&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;&gt;/data/zookeeper&lt;/value&gt;
+</span><span class='line'>  &lt;/property&gt;
+</span><span class='line'>  &lt;property&gt;
+</span><span class='line'>    &lt;name&gt;hbase.cluster.distributed&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;true&lt;/value&gt;
+</span><span class='line'>  &lt;/property&gt;
+</span><span class='line'>  &lt;property&gt;
+</span><span class='line'>    &lt;name&gt;hbase.zookeeper.quorum&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;master.local,slave1.local,slave2.local&lt;/value&gt;
+</span><span class='line'>  &lt;/property&gt;
+</span><span class='line'>  &lt;property&gt;
+</span><span class='line'>    &lt;name&gt;hbase.zookeeper.property.clientPort&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;2181&lt;/value&gt;
+</span><span class='line'>  &lt;/property&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>step 7 HBase集成Hive</h3>
+
+<p>主要参考：　<a href="https://cwiki.apache.org/confluence/display/Hive/HBaseIntegration">https://cwiki.apache.org/confluence/display/Hive/HBaseIntegration</a>
+主要注意两点：</p>
+
+<ul>
+<li>Hive的Hbase Handler</li>
+<li>Hive的配置</li>
+</ul>
+
+
+<p>Hive提供了Hbase存储的处理类：org.apache.hadoop.hive.hbase.HBaseStorageHandler
+可以视为Hive底层的一种存储引擎。
+在原来hive配置的基础上增加如下配置：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  &lt;property&gt;
+</span><span class='line'>    &lt;name&gt;hive.aux.jars.path&lt;/name&gt;
+</span><span class='line'>    &lt;value&gt;file:///home/ubuntu/apache-hive-2.0.0-bin/lib/hbase-client-1.1.1.jar,file:///home/ubuntu/apache-hive-2.0.0-bin/lib/hbase-server-1.1.1.jar,file:///home/ubuntu/download/apache-hive-2.1.0-bin/lib/hive-hbase-handler-2.1.0.jar,file:///home/ubuntu/apache-hive-2.0.0-bin/lib/hbase-protocol-1.1.1.jar,file:///home/ubuntu/apache-hive-2.0.0-bin/lib/zookeeper-3.4.6.jar,file:///home/ubuntu/elasticsearch-hadoop-2.3.2/dist/elasticsearch-hadoop-2.3.2.jar&lt;/value&gt;
+</span><span class='line'>    &lt;description&gt;The location of the plugin jars that contain implementations of user defined functions and serdes.&lt;/description&gt;
+</span><span class='line'>  &lt;/property&gt;
+</span><span class='line'>&lt;property&gt;
+</span><span class='line'>  &lt;name&gt;hbase.zookeeper.quorum&lt;/name&gt;
+</span><span class='line'>  &lt;value&gt;master.local,slave1.local,slave2.local&lt;/value&gt;
+</span><span class='line'>  &lt;description&gt;A comma separated list (with no spaces) of the IP addresses of all ZooKeeper servers in the cluster.&lt;/description&gt;
+</span><span class='line'>&lt;/property&gt;
+</span><span class='line'>&lt;property&gt;
+</span><span class='line'>  &lt;name&gt;hbase.zookeeper.property.clientPort&lt;/name&gt;
+</span><span class='line'>  &lt;value&gt;2181&lt;/value&gt;
+</span><span class='line'>  &lt;description&gt;The Zookeeper client port. The MapR default clientPort is 5181.&lt;/description&gt;
+</span><span class='line'>&lt;/property&gt;
+</span><span class='line'>&lt;property&gt;
+</span><span class='line'>  &lt;name&gt;hive.server2.thrift.port&lt;/name&gt;
+</span><span class='line'>  &lt;value&gt;10000&lt;/value&gt;
+</span><span class='line'>&lt;/property&gt;
+</span><span class='line'>&lt;property&gt;
+</span><span class='line'>  &lt;name&gt;hive.server2.thrift.bind.host&lt;/name&gt;
+</span><span class='line'>  &lt;value&gt;0.0.0.0&lt;/value&gt;
+</span><span class='line'>&lt;/property&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在hive创建基于hbase的表时，需要通过如下命令：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>CREATE TABLE hbase_table_1(value map&lt;string,int&gt;, row_key int) 
+</span><span class='line'>STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+</span><span class='line'>WITH SERDEPROPERTIES (
+</span><span class='line'>"hbase.columns.mapping" = "cf:col_prefix.*,:key"
+</span><span class='line'>)
+</span><span class='line'>TBLPROPERTIES("hbase.table.name" = "hbase_table_1");</span></code></pre></td></tr></table></div></figure>
+
+
+<p>事先必须先创建好Hbase表。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Gavin Huang</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2017-01-12T10:24:44+08:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>12</span><span class='date-suffix'>th</span>, <span class='date-year'>2017</span></span> <span class='time'>10:24 am</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://gavinhuang.github.io/blog/set-up-big-data-cluster/" data-via="" data-counturl="http://gavinhuang.github.io/blog/set-up-big-data-cluster/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/angular-for-backend-developer/" title="Previous Post: angular for backend developer">&laquo; angular for backend developer</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/machine-learning/" title="Next Post: 机器学习简介">机器学习简介 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/the-tale-of-two-pipeline/">The Tale of Two Pipelines</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/keras-based-word2vec-tutorial/">基于Keras的Word2Vec教程</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/hive-on-spark/">Hive on Spark</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/machine-learning/">机器学习简介</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/set-up-big-data-cluster/">搭建大数据全栈集群</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/gavinHuang">@gavinHuang</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'gavinHuang',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2021 - Gavin Huang -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'gavin-huang-on-backend';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://gavinhuang.github.io/blog/set-up-big-data-cluster/';
+        var disqus_url = 'http://gavinhuang.github.io/blog/set-up-big-data-cluster/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
